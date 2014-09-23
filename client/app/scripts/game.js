@@ -1,38 +1,36 @@
 define(['three'], function(THREE) {
     'use strict';
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    var renderer = new THREE.WebGLRenderer();
+    var loader = new THREE.JSONLoader();
+    renderer.setClearColor(0x000000, 1.0);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMapEnabled = true;
+
+    var render = function() {
+        renderer.render(scene, camera);
+        requestAnimationFrame(render);
+    };
+
     return {
         start: function() {
-            this.renderer = new THREE.WebGLRenderer();
-            this.renderer.setClearColor(0x000000, 1.0);
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
-            this.renderer.shadowMapEnabled = true;
+            var sunLight = new THREE.PointLight(0xffffff, 1.0, 500);
+            sunLight.position.set(30, 30, 10);
+            sunLight.shadowCameraFar = 10;
+            sunLight.shadowCameraNear = 500;
 
-            this.scene = new THREE.Scene();
-            this.camera = new THREE.PerspectiveCamera(20, 20, 10);
+            scene.add(sunLight);
 
-            this.sunLight = new THREE.PointLight(0x000000, 1.0, 500);
-            this.sunLight.position.set(30, 30, 10);
-            this.sunLight.shadowCameraFar = 10;
-            this.sunLight.shadowCameraNear = 500;
 
-            this.scene.add(this.sunLight);
-
-            this.loader = new THREE.JSONLoader();
-
-            this.loader.load("/ressources/models/testMonkey.js", function(geometry, material){
-                this.monckeyMesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial(material));
-                this.scene.add(this.monckeyMesh);
+            loader.load("/ressources/models/testMonkey.js", function(geometry, material){
+                var mesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial(material));
+                scene.add(mesh);
             });
-
-            this.render();
         },
         render: function(){
-            requestAnimationFrame(render);
-
-            this.renderer.autoClear = false;
-            this.renderer.clear();
-
-            this.renderer.render(this.scene, this.camera);
+            document.body.appendChild(renderer.domElement);
+            render();
         }
     }
 });
