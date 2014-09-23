@@ -7,19 +7,25 @@ define(['three', './input'], function(THREE, input) {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMapEnabled = true;
 
-    var render = function() {
-        renderer.render(scene, camera);
-        requestAnimationFrame(render);
-    };
-
     return {
         start: function() {
+            var that = this;
+            var render = function() {
+                renderer.render(scene, camera);
+                var listeners = that.frameListeners;
+                for(var i=0;i< listeners.length; ++i) {
+                    listeners[i](that);
+                }
+                requestAnimationFrame(render);
+            };
             document.body.appendChild(renderer.domElement);
             input.setup(renderer.domElement);
             render();
         },
         camera: camera,
         scene: scene,
-        renderer: renderer
+        renderer: renderer,
+        frameListeners: [],
+        input: input
     }
 });
