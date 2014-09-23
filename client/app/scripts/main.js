@@ -1,3 +1,3 @@
-require(['game'], function(game){
+define(['game'], function(game){
     game.start();
 });
