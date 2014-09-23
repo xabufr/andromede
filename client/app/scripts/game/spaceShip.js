@@ -1,17 +1,17 @@
-define(['three'], function(THREE) {
+define(['three', 'game/input'], function(THREE, input) {
     'use strict';
-    var loader = new THREE.JSONLoader();
-    var mesh = null;
+    return function SpaceShip(core){
+        this.mesh = new THREE.Mesh(core.assetsLoader.get('spaceShip').geometry,
+            new THREE.MeshLambertMaterial(core.assetsLoader.get('spaceShip').materials));
+        this.mesh.receiveShadow = true;
+        this.mesh.position.set(0,0,0);
 
-    return {
-        init: function(scene){
-            loader.load("assets/models/spaceShip.js", function(geometry, materials){
-                mesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial(materials));
-                mesh.receiveShadow = true;
-                mesh.position.set(0,0,0);
-
-                scene.add(mesh);
-            });
-        }
+        core.scene.add(this.mesh);
+        var that = this;
+        this.move = function(render){
+            var input = render.input;
+            that.mesh.position.x = input.mouse.rel.x;
+            that.mesh.position.y = input.mouse.rel.y;
+        };
     }
 });
