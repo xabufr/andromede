@@ -1,4 +1,4 @@
-define(['three'], function(THREE) {
+define(['three', './input'], function(THREE, input) {
     'use strict';
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -15,10 +15,11 @@ define(['three'], function(THREE) {
     return {
         start: function() {
             document.body.appendChild(renderer.domElement);
+            input.setup(renderer.domElement);
             render();
         },
         camera: camera,
         scene: scene,
-        renderer: renderer,
+        renderer: renderer
     }
 });
