@@ -1,0 +1,20 @@
+{
+  "name": "Andromède",
+  "version": "0.0.0",
+  "homepage": "https://github.com/xabufr/andromede",
+  "authors": [
+    "Thomas Loubiou <xabufr@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "three.js": "*",
+    "requirejs": "~2.1.15"
+  }
+}
