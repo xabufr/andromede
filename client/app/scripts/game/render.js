@@ -1,4 +1,4 @@
-define(['three', './input'], function(THREE, input) {
+define(['three', './input', './assetsLoader'], function(THREE, input, assetsLoader) {
     'use strict';
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -8,19 +8,24 @@ define(['three', './input'], function(THREE, input) {
     renderer.shadowMapEnabled = true;
 
     return {
-        start: function() {
+        assetsLoader: new assetsLoader(),
+        start: function(callback) {
             var that = this;
-            var render = function() {
-                renderer.render(scene, camera);
-                var listeners = that.frameListeners;
-                for(var i=0;i< listeners.length; ++i) {
-                    listeners[i](that);
-                }
-                requestAnimationFrame(render);
-            };
-            document.body.appendChild(renderer.domElement);
-            input.setup(renderer.domElement);
-            render();
+            this.assetsLoader.loadMeshes(function(){
+                var render = function() {
+                    renderer.render(scene, camera);
+                    var listeners = that.frameListeners;
+                    for(var i=0;i< listeners.length; ++i) {
+                        listeners[i](that);
+                    }
+                    requestAnimationFrame(render);
+                };
+                document.body.appendChild(renderer.domElement);
+                input.setup(renderer.domElement);
+
+                callback();
+                render();
+            });
         },
         camera: camera,
         scene: scene,
