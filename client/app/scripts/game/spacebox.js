@@ -21,6 +21,7 @@ define(['three'], function(THREE) {
         side: THREE.BackSide
     });
     var mesh = new THREE.Mesh(geometry, material);
+    mesh.name = 'skybox';
 
     return mesh;
 });

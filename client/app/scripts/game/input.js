@@ -21,7 +21,11 @@ define([], function() {
                     this.set(this.x + x, this.y + y);
                 }
             },
-            move: false
+            move: false,
+            buttons: {
+                right: false,
+                left: false
+            }
         },
         setup: function(element) {
             var that = this;
@@ -54,6 +58,22 @@ define([], function() {
                     document.removeEventListener("mousemove", moveCallback, false);
                 }
             };
+            var mouseDown = function(e) {
+                e.preventDefault();
+                if(e.button == 2) {
+                    that.mouse.buttons.right = true;
+                } else if(e.button == 0) {
+                    that.mouse.buttons.left = true;
+                }
+            };
+            var mouseUp = function(e) {
+                e.preventDefault();
+                if(e.button == 2) {
+                    that.mouse.buttons.right = false;
+                } else if(e.button == 0) {
+                    that.mouse.buttons.left = false;
+                }
+            };
             if(havePointerLock) {
                 element.requestPointerLock = element.requestPointerLock ||
                     element.mozRequestPointerLock ||
@@ -66,10 +86,16 @@ define([], function() {
                 document.addEventListener('webkitpointerlockchange', lockChangeCallback, false);
 
                 element.addEventListener('click', lock, false);
+                element.addEventListener('mousedown', mouseDown, false);
+                element.addEventListener('mouseup', mouseUp, false);
             } else {
                 console.log('Cannot lock mouse');
                 throw 'Cannot lock mouse';
             }
+        },
+        reset: function() {
+            this.mouse.move = false;
+            this.mouse.rel.x = this.mouse.rel.y = 0;
         }
     }
 });

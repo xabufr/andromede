@@ -6,24 +6,32 @@ define(['three', './input', './assetsLoader'], function(THREE, input, assetsLoad
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMapEnabled = true;
 
+    var resize = function() {
+        renderer.camera.threeCamera.aspect = window.innerWidth / window.innerHeight;
+        renderer.camera.threeCamera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+
+    window.addEventListener('resize', resize, false);
+
+    var timer = new THREE.Clock();
+
     return {
         assetsLoader: new assetsLoader(),
         start: function(callback) {
             var that = this;
             this.assetsLoader.loadMeshes(function(){
                 var render = function() {
+                    var  delta = timer.getDelta();
                     renderer.render(that.scene, that.camera.threeCamera);
+
                     var listeners = that.frameListeners;
 
                     for(var i=0;i< listeners.length; ++i) {
-                        listeners[i](that);
+                        listeners[i](that, delta);
                     }
 
-                    if (that.input.mouse.move) {
-                        that.input.mouse.move = false;
-                        that.input.mouse.rel = {x:0,y:0};
-                    }
-
+                    input.reset();
                     requestAnimationFrame(render);
                 };
                 document.body.appendChild(renderer.domElement);
