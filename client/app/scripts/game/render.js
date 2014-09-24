@@ -21,6 +21,7 @@ define(['three', './input', './assetsLoader'], function(THREE, input, assetsLoad
                     for(var i=0;i< listeners.length; ++i) {
                         listeners[i](that, delta);
                     }
+                    input.reset();
                     requestAnimationFrame(render);
                 };
                 document.body.appendChild(renderer.domElement);

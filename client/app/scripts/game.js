@@ -4,19 +4,19 @@ define(['game/render', 'game/spacebox', 'game/weapon', 'game/laser/lasershot', '
         start: function() {
             var that = this;
             render.start(function(){
-                var first = 0;
                 var weapon = new Weapon(render.scene, render, that.laserPool);
                 weapon.mesh.position.x = 6;
-                render.frameListeners.push(function() {
-                    if(first === 0) {
-                        var weapon2 = new Weapon(render.scene, render, that.laserPool);
-                        weapon2.mesh.position.set(0, 10,0);
-                        var weapon2 = new Weapon(render.scene, render, that.laserPool);
-                        weapon2.mesh.position.set(10, 0,0);
-                    } else if(first === 1) {
+                var weapon2 = new Weapon(render.scene, render, that.laserPool);
+                weapon2.mesh.position.set(0, 10,0);
+                var weapon2 = new Weapon(render.scene, render, that.laserPool);
+                weapon2.mesh.position.set(10, 0,0);
+                var timeSinceLastFire = 1000;
+                render.frameListeners.push(function(_, delta) {
+                    if(render.input.mouse.buttons.left && timeSinceLastFire > 1) {
+                        timeSinceLastFire = 0;
                         weapon.tirer();
                     }
-                    ++first;
+                    timeSinceLastFire+= delta;
                 });
                 render.scene.add(spacebox);
 

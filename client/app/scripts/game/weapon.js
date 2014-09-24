@@ -7,7 +7,7 @@ define(['three', './laser/lasershot'], function(THREE, LaserShot) {
         parent.add(this.mesh);
         this.tirer = function() {
             var laser = laserPool.get();
-            laser.init(that, 2, 2);
+            laser.init(that, 2, 0.5);
         };
     };
 });
