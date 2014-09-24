@@ -1,11 +1,13 @@
 define(['three', './input', './assetsLoader'], function(THREE, input, assetsLoader) {
     'use strict';
     var scene = new THREE.Scene();
+    var sceneFirstPass = new THREE.Scene();
     var objectsNode = new THREE.Object3D();
     var effetsNode = new THREE.Object3D();
     scene.add(objectsNode);
     scene.add(effetsNode);
     var renderer = new THREE.WebGLRenderer();
+    renderer.autoClear = false;
     renderer.setClearColor(0x000000, 1.0);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMapEnabled = true;
@@ -23,32 +25,38 @@ define(['three', './input', './assetsLoader'], function(THREE, input, assetsLoad
     return {
         assetsLoader: new assetsLoader(),
         start: function(callback) {
-            var that = this;
             this.assetsLoader.loadMeshes(function(){
                 var render = function() {
+                    for(var i=0;i<this.beforeRenderListeners.length;++i) {
+                        this.beforeRenderListeners[i](this);
+                    }
                     var  delta = timer.getDelta();
-                    renderer.render(that.scene, that.camera.threeCamera);
+                    renderer.clear();
+                    renderer.render(sceneFirstPass, this.camera.threeCamera);
+                    renderer.render(this.scene, this.camera.threeCamera);
 
-                    var listeners = that.frameListeners;
+                    var listeners = this.frameListeners;
 
                     for(var i=0;i< listeners.length; ++i) {
-                        listeners[i](that, delta);
+                        listeners[i](this, delta);
                     }
 
                     input.reset();
                     requestAnimationFrame(render);
-                };
+                }.bind(this);
                 document.body.appendChild(renderer.domElement);
                 input.setup(renderer.domElement);
 
                 callback();
                 render();
-            });
+            }.bind(this));
         },
         camera: null,
         scene: scene,
+        sceneFirstPass: sceneFirstPass,
         renderer: renderer,
         frameListeners: [],
+        beforeRenderListeners: [],
         input: input,
         objectsNode: objectsNode,
         effectsNode: effetsNode
