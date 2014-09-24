@@ -1,4 +1,4 @@
-define(['game/render', 'game/camera', 'game/spacebox', 'game/spaceShip', 'game/weapon', 'game/laser/lasershot', 'core/pool'], function(render, camera, spacebox, SpaceShip,Weapon, laser, Pool) {
+define(['game/render', 'game/camera', 'game/spacebox', 'game/spaceShip', 'game/weapon', 'game/laser/lasershot', 'core/pool'], function(render, camera, spacebox, SpaceShip, Weapon, laser, Pool) {
     'use strict';
     return {
         start: function() {
@@ -15,7 +15,7 @@ define(['game/render', 'game/camera', 'game/spacebox', 'game/spaceShip', 'game/w
                     weapon.isFiring = render.input.mouse.buttons.left;
                     weapon.update(_, delta);
                 });
-                render.scene.add(spacebox);
+                render.effectsNode.add(spacebox);
 
                 var sunLight = new THREE.PointLight(0xffffff, 1.0, 50);
                 sunLight.position.set(20, 20, 0);
