@@ -7,6 +7,14 @@ define(['three', './input', './assetsLoader'], function(THREE, input, assetsLoad
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMapEnabled = true;
 
+    var resize = function() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+
+    window.addEventListener('resize', resize, false);
+
     var timer = new THREE.Clock();
 
     return {
