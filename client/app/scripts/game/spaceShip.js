@@ -10,8 +10,11 @@ define(['three', 'game/input'], function(THREE, input) {
         var that = this;
         this.move = function(render){
             var input = render.input;
-            that.mesh.position.x = input.mouse.rel.x;
-            that.mesh.position.y = input.mouse.rel.y;
+
+            if (input.mouse.move){
+                that.mesh.rotation.x += input.mouse.rel.y * 0.1;
+                that.mesh.rotation.y += -input.mouse.rel.x * 0.1;
+            }
         };
     }
 });

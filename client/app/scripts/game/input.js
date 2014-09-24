@@ -20,7 +20,8 @@ define([], function() {
                 increment: function(x, y) {
                     this.set(this.x + x, this.y + y);
                 }
-            }
+            },
+            move: false
         },
         setup: function(element) {
             var that = this;
@@ -42,6 +43,7 @@ define([], function() {
                 that.mouse.rel.x = movementX;
                 that.mouse.rel.y = movementY;
                 that.mouse.abs.increment(movementX, movementY);
+                that.mouse.move = true;
             };
             var lockChangeCallback = function() {
                 if (document.pointerLockElement === element ||
