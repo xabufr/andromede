@@ -45,7 +45,6 @@ define(['three', './input', './assetsLoader', 'Stats'], function(THREE, input, a
                 }.bind(this);
 
                 var resize = function() {
-                    console.log('resize');
                     this.camera.threeCamera.aspect = window.innerWidth / window.innerHeight;
                     this.camera.threeCamera.updateProjectionMatrix();
                     renderer.setSize(window.innerWidth, window.innerHeight);

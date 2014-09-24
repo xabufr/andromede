@@ -13,14 +13,16 @@ define(['three'], function(THREE) {
         cubeMap.format = THREE.RGBFormat;
         var spaceShader = THREE.ShaderLib['cube'];
         spaceShader.uniforms['tCube'].value = cubeMap;
-        var geometry = new THREE.BoxGeometry(100, 100, 100);
-        var material = new THREE.ShaderMaterial({
-            fragmentShader: spaceShader.fragmentShader,
-            vertexShader: spaceShader.vertexShader,
-            uniforms: spaceShader.uniforms,
-            depthWrite: false,
-            side: THREE.BackSide
-        });
+        var geometry = new THREE.BoxGeometry(500, 500, 500);
+        var materialArray = [];
+        for(var i=0;i<6;++i) {
+            materialArray.push(new THREE.MeshBasicMaterial({
+                map: THREE.ImageUtils.loadTexture(urls[i]),
+                side: THREE.BackSide,
+                depthWrite: false
+            }));
+        }
+        var material = new THREE.MeshFaceMaterial(materialArray);
         var mesh = new THREE.Mesh(geometry, material);
         mesh.name = 'skybox';
         core.sceneFirstPass.add(mesh);

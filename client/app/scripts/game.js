@@ -1,8 +1,8 @@
-define(['game/render', 'game/camera', 'game/cursor', 'game/spacebox', 'game/spaceShip', 'game/weapon', 'game/laser/lasershot', 'core/pool'], function(render, camera, Cursor, Spacebox, SpaceShip,Weapon, laser, Pool) {
+define(['game/render', 'game/camera', 'game/cursor', 'game/spacebox', 'game/spaceShip', 'game/weapon', 'game/laser/lasershot', 'core/pool'], function(render, Camera, Cursor, Spacebox, SpaceShip,Weapon, laser, Pool) {
     'use strict';
     return {
         start: function() {
-            render.camera = new camera(null, 10);
+            render.camera = new Camera(null, 10);
             var that = this;
             render.start(function(){
                 var spacebox = new Spacebox(render);
@@ -34,6 +34,6 @@ define(['game/render', 'game/camera', 'game/cursor', 'game/spacebox', 'game/spac
                 render.frameListeners.push(cursor.move);
             });
         },
-        laserPool: new Pool(laser, 50, render)
+        laserPool: new Pool(laser, 5, render)
     }
 });
