@@ -5,7 +5,6 @@ define(['three', './assetsList'], function (THREE, assetsList){
         this.meshesList = {};
         this.loader = new THREE.JSONLoader();
         this.loadMeshes = function(callback) {
-            var that = this;
             var nbrAssets = Object.keys(assetsList).length;
             var loadedAssets = 0;
 
@@ -13,7 +12,7 @@ define(['three', './assetsList'], function (THREE, assetsList){
                 var path = assetsList[key];
                 this.loader.load(path, function(currentKey) {
                     return function(geometry, materials){
-                        that.meshesList[currentKey] = {
+                        this.meshesList[currentKey] = {
                             geometry: geometry,
                             materials: materials
                         };
@@ -21,8 +20,8 @@ define(['three', './assetsList'], function (THREE, assetsList){
                         if (++loadedAssets === nbrAssets) {
                             callback();
                         }
-                    }
-                }(key));
+                    }.bind(this);
+                }.bind(this)(key));
             }
         };
 

@@ -3,15 +3,14 @@ define(['game/render', 'game/camera', 'game/cursor', 'game/spacebox', 'game/spac
     return {
         start: function() {
             render.camera = new Camera(null, 10);
-            var that = this;
             render.start(function(){
                 var spacebox = new Spacebox(render);
 
-                var weapon = new Weapon(render.objectsNode, render, that.laserPool);
+                var weapon = new Weapon(render.objectsNode, render, this.laserPool);
                 weapon.mesh.position.x = 6;
-                var weapon2 = new Weapon(render.objectsNode, render, that.laserPool);
+                var weapon2 = new Weapon(render.objectsNode, render, this.laserPool);
                 weapon2.mesh.position.set(0, 10,0);
-                var weapon2 = new Weapon(render.objectsNode, render, that.laserPool);
+                var weapon2 = new Weapon(render.objectsNode, render, this.laserPool);
                 weapon2.mesh.position.set(10, 0,0);
                 render.frameListeners.push(function(_, delta) {
                     weapon.isFiring = render.input.mouse.buttons.left;
@@ -28,11 +27,11 @@ define(['game/render', 'game/camera', 'game/cursor', 'game/spacebox', 'game/spac
                 var spaceShip = new SpaceShip(render);
                 render.camera.setTarget(spaceShip.mesh);
 
-                var cursor = new Cursor(render.scene);
+                render.cursor = new Cursor(render.scene);
 
                 render.frameListeners.push(spaceShip.move);
-                render.frameListeners.push(cursor.move);
-            });
+                render.frameListeners.push(render.cursor.move);
+            }.bind(this));
         },
         laserPool: new Pool(laser, 5, render)
     }

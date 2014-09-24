@@ -96,7 +96,6 @@ define([], function() {
             }
         },
         setup: function(element) {
-            var that = this;
             var havePointerLock = 'pointerLockElement' in document ||
                 'mozPointerLockElement' in document ||
                 'webkitPointerLockElement' in document;
@@ -112,11 +111,11 @@ define([], function() {
                         event.mozMovementY      ||
                         event.webkitMovementY   ||
                         0;
-                that.mouse.rel.x = movementX;
-                that.mouse.rel.y = movementY;
-                that.mouse.abs.increment(movementX, movementY);
-                that.mouse.move = true;
-            };
+                this.mouse.rel.x = movementX;
+                this.mouse.rel.y = movementY;
+                this.mouse.abs.increment(movementX, movementY);
+                this.mouse.move = true;
+            }.bind(this);
             var lockChangeCallback = function() {
                 if (document.pointerLockElement === element ||
                     document.mozPointerLockElement === element ||
@@ -129,19 +128,19 @@ define([], function() {
             var mouseDown = function(e) {
                 e.preventDefault();
                 if(e.button == 2) {
-                    that.mouse.buttons.right = true;
+                    this.mouse.buttons.right = true;
                 } else if(e.button == 0) {
-                    that.mouse.buttons.left = true;
+                    this.mouse.buttons.left = true;
                 }
-            };
+            }.bind(this);
             var mouseUp = function(e) {
                 e.preventDefault();
                 if(e.button == 2) {
-                    that.mouse.buttons.right = false;
+                    this.mouse.buttons.right = false;
                 } else if(e.button == 0) {
-                    that.mouse.buttons.left = false;
+                    this.mouse.buttons.left = false;
                 }
-            };
+            }.bind(this);
             var mouseWheel = function(e) {
                 this.mouse.abs.incrementWheel(e.deltaY);
                 this.mouse.rel.z = e.deltaY;
