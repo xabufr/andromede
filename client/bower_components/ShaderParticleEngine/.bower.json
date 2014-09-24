@@ -1,0 +1,14 @@
+{
+  "name": "ShaderParticleEngine",
+  "homepage": "https://github.com/squarefeet/ShaderParticleEngine",
+  "_release": "bb3d0595cb",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "bb3d0595cb9d5f9c49493804a2e7f84092d300f2"
+  },
+  "_source": "git://github.com/squarefeet/ShaderParticleEngine.git",
+  "_target": "*",
+  "_originalSource": "squarefeet/ShaderParticleEngine",
+  "_direct": true
+}

@@ -3,6 +3,7 @@ define(['three'], function(THREE) {
     var texture = new THREE.Texture(canvas);
     var geometry = new THREE.PlaneGeometry(1, 0.1);
     var nPlanes = 8;
+    var count = 0;
     texture.needsUpdate = true;
 
     return function() {
@@ -18,6 +19,7 @@ define(['three'], function(THREE) {
             this.material.color = new THREE.Color(0x4444aa);
         };
         var object3d = new THREE.Object3D();
+        object3d.name = 'laser'+count++;
         this.mesh = object3d;
 
         for(var i=0; i < nPlanes; ++i) {
@@ -35,15 +37,15 @@ define(['three'], function(THREE) {
         var context	= canvas.getContext( '2d' );
         canvas.width	= 1;
         canvas.height	= 64;
-// set gradient
-        var gradient	= context.createLinearGradient(0, 0, canvas.width, canvas.height);
-        gradient.addColorStop( 0 , 'rgba( 0, 0, 0,0.1)' );
-        gradient.addColorStop( 0.1, 'rgba(160,160,160,0.3)' );
-        gradient.addColorStop( 0.5, 'rgba(255,255,255,0.5)' );
-        gradient.addColorStop( 0.9, 'rgba(160,160,160,0.3)' );
-        gradient.addColorStop( 1.0, 'rgba( 0, 0, 0,0.1)' );
+// set grd
+        var grd	= context.createLinearGradient(0, 0, canvas.width, canvas.height);
+        grd.addColorStop( 0 , 'rgba( 0, 0, 0,0.1)' );
+        grd.addColorStop( 0.1, 'rgba(160,160,160,0.3)' );
+        grd.addColorStop( 0.5, 'rgba(255,255,255,0.5)' );
+        grd.addColorStop( 0.9, 'rgba(160,160,160,0.3)' );
+        grd.addColorStop( 1.0, 'rgba( 0, 0, 0,0.1)' );
 // fill the rectangle
-        context.fillStyle	= gradient;
+        context.fillStyle	= grd;
         context.fillRect(0,0, canvas.width, canvas.height);
 // return the just built canvas
         return canvas;
