@@ -14,6 +14,9 @@ define(['three'], function(THREE) {
             depthWrite	: false,
             transparent	: true
         });
+        this.resetMaterialColor = function() {
+            this.material.color = new THREE.Color(0x4444aa);
+        };
         var object3d = new THREE.Object3D();
         this.mesh = object3d;
 

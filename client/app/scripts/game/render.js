@@ -7,16 +7,19 @@ define(['three', './input', './assetsLoader'], function(THREE, input, assetsLoad
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMapEnabled = true;
 
+    var timer = new THREE.Clock();
+
     return {
         assetsLoader: new assetsLoader(),
         start: function(callback) {
             var that = this;
             this.assetsLoader.loadMeshes(function(){
                 var render = function() {
+                    var  delta = timer.getDelta();
                     renderer.render(scene, camera);
                     var listeners = that.frameListeners;
                     for(var i=0;i< listeners.length; ++i) {
-                        listeners[i](that);
+                        listeners[i](that, delta);
                     }
                     requestAnimationFrame(render);
                 };
