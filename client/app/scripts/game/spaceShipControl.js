@@ -1,18 +1,25 @@
 define([], function(){
-    return function SpaceShipControl(mesh){
-        var that = this;
+    return function SpaceShipControl(ship){
+        var mesh = ship.mesh;
         this.mesh = mesh;
         this.maxRotation = Math.PI;
         this.changePitch = function(percent, delta) {
-            that.mesh.rotateX(that.maxRotation * delta * percent);
-        };
+            this.mesh.rotateX(this.maxRotation * delta * percent);
+        }.bind(this);
 
         this.changeRoll = function(percent, delta) {
-            that.mesh.rotateY(-(that.maxRotation * delta * percent));
-        };
+            this.mesh.rotateY(-(this.maxRotation * delta * percent));
+        }.bind(this);
 
         this.setMaxRotation = function(rotation) {
-            that.maxRotation = rotation;
-        };
+            this.maxRotation = rotation;
+        }.bind(this);
+
+        this.update = function(core, delta) {
+            var powerValue = core.input.mouse.rel.z;
+            if(powerValue != 0) {
+                ship.incrementEnginePower(powerValue < 0 ? 10 : -10);
+            }
+        }
     };
 });
