@@ -1,6 +1,10 @@
 define(['three', './input', './assetsLoader'], function(THREE, input, assetsLoader) {
     'use strict';
     var scene = new THREE.Scene();
+    var objectsNode = new THREE.Object3D();
+    var effetsNode = new THREE.Object3D();
+    scene.add(objectsNode);
+    scene.add(effetsNode);
     var renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(0x000000, 1.0);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -45,6 +49,8 @@ define(['three', './input', './assetsLoader'], function(THREE, input, assetsLoad
         scene: scene,
         renderer: renderer,
         frameListeners: [],
-        input: input
+        input: input,
+        objectsNode: objectsNode,
+        effectsNode: effetsNode
     }
 });

@@ -3,6 +3,7 @@ define(['three'], function(THREE) {
     var texture = new THREE.Texture(canvas);
     var geometry = new THREE.PlaneGeometry(1, 0.1);
     var nPlanes = 8;
+    var count = 0;
     texture.needsUpdate = true;
 
     return function() {
@@ -18,6 +19,7 @@ define(['three'], function(THREE) {
             this.material.color = new THREE.Color(0x4444aa);
         };
         var object3d = new THREE.Object3D();
+        object3d.name = 'laser'+count++;
         this.mesh = object3d;
 
         for(var i=0; i < nPlanes; ++i) {
