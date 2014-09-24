@@ -6,7 +6,7 @@ define(['three'], function(THREE){
 
         var that = this;
         this.update = function() {
-            that.threeCamera.position.set(0, 0, -that.distance);
+            that.threeCamera.position.set(0, 0, this.target.position.z - that.distance);
             that.threeCamera.lookAt(that.target.position);
         };
 

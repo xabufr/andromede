@@ -1,4 +1,4 @@
-define(['game/render', 'game/camera', 'game/spacebox', 'game/spaceShip', 'game/weapon', 'game/laser/lasershot', 'core/pool'], function(render, camera, Spacebox, SpaceShip, Weapon, laser, Pool) {
+define(['game/render', 'game/camera', 'game/cursor', 'game/spacebox', 'game/spaceShip', 'game/weapon', 'game/laser/lasershot', 'core/pool'], function(render, camera, Cursor, Spacebox, SpaceShip,Weapon, laser, Pool) {
     'use strict';
     return {
         start: function() {
@@ -28,7 +28,10 @@ define(['game/render', 'game/camera', 'game/spacebox', 'game/spaceShip', 'game/w
                 var spaceShip = new SpaceShip(render);
                 render.camera.setTarget(spaceShip.mesh);
 
+                var cursor = new Cursor(render.scene);
+
                 render.frameListeners.push(spaceShip.move);
+                render.frameListeners.push(cursor.move);
             });
         },
         laserPool: new Pool(laser, 50, render)
