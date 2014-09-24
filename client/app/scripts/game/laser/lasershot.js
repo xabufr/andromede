@@ -1,5 +1,31 @@
-define(['./basiclaser', 'SPE', 'three'], function(BasicLaser, SPE, THREE) {
+define(['./basiclaser', 'SPE', 'three', 'game/render'], function(BasicLaser, SPE, THREE, core) {
     'use strict';
+    var explosionGroup = new SPE.Group({
+        texture: THREE.ImageUtils.loadTexture('assets/textures/smokeparticle.png'),
+        maxAge: 0.5
+    });
+    var explosionSettings = {
+        type: 'sphere',
+        positionSpread: new THREE.Vector3(10, 10, 10),
+        radius: 0.25,
+        speed: 1,
+        sizeStart: 0.5,
+        sizeStartSpread: 0.5,
+        sizeEnd: 0,
+        opacityStart: 1,
+        opacityEnd: 0,
+        colorStart: new THREE.Color(0x4444aa),
+        colorStartSpread: new THREE.Vector3(1, 1, 1),
+        colorEnd: new THREE.Color('blue'),
+        particleCount: 200,
+        alive: 0,
+        duration: 0.05
+    };
+    explosionGroup.addPool(5, explosionSettings, true);
+    core.effectsNode.add(explosionGroup.mesh);
+    core.frameListeners.push(function(_, delta) {
+        explosionGroup.tick(delta);
+    });
     return function(core) {
         var particleGroup = new SPE.Group({
             texture: THREE.ImageUtils.loadTexture('assets/textures/smokeparticle.png'),
@@ -20,7 +46,7 @@ define(['./basiclaser', 'SPE', 'three'], function(BasicLaser, SPE, THREE) {
             opacityEnd: 0,
             colorStart: new THREE.Color('white'),
             colorEnd: new THREE.Color('blue'),
-            emitterDuration: 0.4,
+            emitterDuration: 0.05,
             alive: 0
         });
         particleGroup.addEmitter(particleEmitter);
@@ -85,6 +111,7 @@ define(['./basiclaser', 'SPE', 'three'], function(BasicLaser, SPE, THREE) {
                         var position = intersects[i].point;
                         var distance = position.distanceTo(weapon.mesh.position);
                         if(distance < maxLength) {
+                            explosionGroup.triggerPoolEmitter(1, position);
                             scale = distance;
                             percute = currentMesh;
                         }
