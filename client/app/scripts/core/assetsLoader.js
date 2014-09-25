@@ -1,4 +1,4 @@
-define(['three', './../game/assetsList'], function (THREE, assetsList){
+define(['three', './assetsList'], function (THREE, assetsList){
     'use strict';
 
     return function AssetsLoader(){
