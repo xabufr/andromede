@@ -15,7 +15,7 @@ define(['three', './laser/lasershot', 'Howler'], function(THREE, LaserShot, Howl
             sound.play();
         }.bind(this);
         this.update = function(_, delta) {
-            if(this.isFiring && lastFire >= 0.001) {
+            if(this.isFiring && lastFire >= 0.1) {
                 this.tirer();
             }
             lastFire += delta;
