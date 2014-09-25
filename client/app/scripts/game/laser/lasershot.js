@@ -8,7 +8,7 @@ define(['./basiclaser', 'SPE', 'three', 'game/render'], function(BasicLaser, SPE
         type: 'sphere',
         positionSpread: new THREE.Vector3(10, 10, 10),
         radius: 0.25,
-        speed: 1,
+        speed: 4,
         sizeStart: 0.5,
         sizeStartSpread: 0.5,
         sizeEnd: 0,
@@ -21,8 +21,9 @@ define(['./basiclaser', 'SPE', 'three', 'game/render'], function(BasicLaser, SPE
         alive: 0,
         duration: 0.05
     };
-    explosionGroup.addPool(5, explosionSettings, true);
+    explosionGroup.addPool(10, explosionSettings, true);
     core.effectsNode.add(explosionGroup.mesh);
+    explosionGroup.mesh.frustumCulled = false;
     core.frameListeners.push(function(_, delta) {
         explosionGroup.tick(delta);
     });

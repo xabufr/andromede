@@ -1,7 +1,32 @@
-define(['three', 'game/input', 'game/spaceShipControl'], function(THREE, input, SpaceShipControl) {
+define(['three', 'game/input', 'game/spaceShipControl', 'SPE', 'game/render'], function(THREE, input, SpaceShipControl, SPE, render) {
     'use strict';
-    return function SpaceShip(core){
+    var engineParticleGroup = new SPE.Group({
+        texture: THREE.ImageUtils.loadTexture('assets/textures/smokeparticle.png'),
+        maxAge: 1
+    });
+    var engineParticleSettings = {
+        type: 'cube',
+        velocitySpread: new THREE.Vector3(1, 1, 1),
+        sizeStart: 0.5,
+        sizeStartSpread: 1,
+        sizeEnd: 0,
+        opacityStart: 1,
+        opacityEnd: 0,
+        colorStart: new THREE.Color(0xFF9933),
+        colorEnd: new THREE.Color(0xFFFF00),
+        particleCount: 1000,
+        particlesPerSecond: 25,
+        alive: 1
+    };
+    engineParticleGroup.mesh.frustumCulled = false;
+    render.effectsNode.add(engineParticleGroup.mesh);
+    render.frameListeners.push(function(core, delta) {
+        engineParticleGroup.tick(delta);
+    });
 
+    return function SpaceShip(core){
+        var emitter = new SPE.Emitter(engineParticleSettings);
+        engineParticleGroup.addEmitter(emitter);
         this.mesh = new THREE.Mesh(core.assetsLoader.get('spaceShip').geometry,
             new THREE.MeshLambertMaterial(core.assetsLoader.get('spaceShip').materials));
         this.mesh.receiveShadow = true;
@@ -12,7 +37,9 @@ define(['three', 'game/input', 'game/spaceShipControl'], function(THREE, input, 
         var maxVelocity = 5;
 
         core.objectsNode.add(this.mesh);
-        this.move = function(render, delta){
+        this.move = function(render, delta) {
+            emitter.position.copy(this.mesh.position);
+            emitter.alive = this.enginePower;
             var input = render.input;
 
             var percenty = input.mouse.abs.x / window.innerWidth - 0.5;

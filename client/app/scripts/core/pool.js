@@ -27,7 +27,7 @@ define([], function() {
             freeObjects = freeObjects.slice(1);
             occupedObjects.push(obj);
             return obj;
-        }
+        };
 
         this.get = function() {
             if(freeObjects.length > 0) {
@@ -40,6 +40,12 @@ define([], function() {
                 }
                 return getFirstFree();
             }
-        }
+        };
+
+        this.forEach = function(callback) {
+            for(var i=0; i<occupedObjects.length;++i) {
+                callback(occupedObjects[i]);
+            }
+        };
     }
 });

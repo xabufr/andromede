@@ -18,7 +18,7 @@ define([], function(){
         this.update = function(core, delta) {
             var powerValue = core.input.mouse.rel.z;
             if(powerValue != 0) {
-                ship.incrementEnginePower(powerValue < 0 ? 10 : -10);
+                ship.incrementEnginePower(powerValue < 0 ? 0.1 : -0.1);
             }
         }
     };
