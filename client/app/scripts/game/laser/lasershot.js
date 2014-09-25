@@ -1,4 +1,4 @@
-define(['./basiclaser', 'SPE', 'three', 'game/render'], function(BasicLaser, SPE, THREE, core) {
+define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser, SPE, THREE, Core) {
     'use strict';
     var explosionGroup = new SPE.Group({
         texture: THREE.ImageUtils.loadTexture('assets/textures/smokeparticle.png'),
@@ -22,9 +22,9 @@ define(['./basiclaser', 'SPE', 'three', 'game/render'], function(BasicLaser, SPE
         duration: 0.05
     };
     explosionGroup.addPool(10, explosionSettings, true);
-    core.effectsNode.add(explosionGroup.mesh);
+    Core.effectsNode.add(explosionGroup.mesh);
     explosionGroup.mesh.frustumCulled = false;
-    core.frameListeners.push(function(_, delta) {
+    Core.frameListeners.push(function(_, delta) {
         explosionGroup.tick(delta);
     });
     return function(core) {

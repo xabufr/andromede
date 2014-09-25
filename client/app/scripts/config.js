@@ -4,7 +4,8 @@ require.config({
         three: "../../bower_components/three.js/three",
         Howler: "../../bower_components/howler.js/howler",
         SPE: '../../bower_components/ShaderParticleEngine/build/ShaderParticles',
-        Stats: '../../bower_components/stats.js/build/stats.min'
+        Stats: '../../bower_components/stats.js/build/stats.min',
+        SocketIO: '../../bower_components/socket.io-client/socket.io'
     },
     shim: {
         three: {

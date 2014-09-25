@@ -1,4 +1,4 @@
-define(['three', './input', './assetsLoader', 'Stats'], function(THREE, input, assetsLoader, Stats) {
+define(['three', './../game/input', './assetsLoader', 'Stats'], function(THREE, input, assetsLoader, Stats) {
     'use strict';
     var scene = new THREE.Scene();
     var sceneFirstPass = new THREE.Scene();

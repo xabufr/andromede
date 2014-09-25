@@ -1,4 +1,4 @@
-define(['three', 'game/input', 'game/spaceShipControl', 'SPE', 'game/render'], function(THREE, input, SpaceShipControl, SPE, render) {
+define(['three', 'game/input', 'game/spaceShipControl', 'SPE', '../core/core'], function(THREE, input, SpaceShipControl, SPE, Core) {
     'use strict';
     var engineParticleGroup = new SPE.Group({
         texture: THREE.ImageUtils.loadTexture('assets/textures/smokeparticle.png'),
@@ -19,8 +19,8 @@ define(['three', 'game/input', 'game/spaceShipControl', 'SPE', 'game/render'], f
         alive: 1
     };
     engineParticleGroup.mesh.frustumCulled = false;
-    render.effectsNode.add(engineParticleGroup.mesh);
-    render.frameListeners.push(function(core, delta) {
+    Core.effectsNode.add(engineParticleGroup.mesh);
+    Core.frameListeners.push(function(core, delta) {
         engineParticleGroup.tick(delta);
     });
 

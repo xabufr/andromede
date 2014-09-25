@@ -1,4 +1,4 @@
-define(['three', 'game/render'], function(THREE){
+define(['three'], function(THREE){
     return function Camera(target, distance) {
         this.distance = distance;
         this.threeCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
