@@ -62,6 +62,7 @@ define(['three', './input', './assetsLoader', 'Stats'], function(THREE, input, a
         },
         camera: null,
         scene: scene,
+        cursor: null,
         sceneFirstPass: sceneFirstPass,
         renderer: renderer,
         frameListeners: [],

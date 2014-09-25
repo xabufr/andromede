@@ -42,14 +42,16 @@ define(['three', 'game/input', 'game/spaceShipControl', 'SPE', 'game/render'], f
             emitter.alive = this.enginePower;
             var input = render.input;
 
-            var percenty = input.mouse.abs.x / window.innerWidth - 0.5;
-            var percentx = input.mouse.abs.y / window.innerHeight - 0.5;
-
             var deplacement = delta * maxVelocity * this.enginePower;
             this.mesh.translateZ(deplacement);
 
-            this.control.changePitch(percentx, delta);
-            this.control.changeRoll(percenty, delta);
+            if (!core.cursor.isInNoneActionArea()) {
+                var percenty = input.mouse.abs.x / window.innerWidth - 0.5;
+                var percentx = input.mouse.abs.y / window.innerHeight - 0.5;
+
+                this.control.changePitch(percentx, delta);
+                this.control.changeRoll(percenty, delta);
+            }
         }.bind(this);
 
         this.incrementEnginePower = function(value) {
