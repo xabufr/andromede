@@ -95,6 +95,10 @@ define([], function() {
                 left: false
             }
         },
+        keyboard: {
+            keys: {},
+            listeners: []
+        },
         setup: function(element) {
             var havePointerLock = 'pointerLockElement' in document ||
                 'mozPointerLockElement' in document ||
@@ -115,6 +119,18 @@ define([], function() {
                 this.mouse.rel.y = movementY;
                 this.mouse.abs.increment(movementX, movementY);
                 this.mouse.move = true;
+            }.bind(this);
+            var keyDown = function(event) {
+                this.keyboard.keys[event.keyCode] = true;
+                for(var i=0;i<this.keyboard.listeners.length;++i) {
+                    this.keyboard.listeners[i](event, true);
+                }
+            }.bind(this);
+            var keyUp = function(event) {
+                this.keyboard.keys[event.keyCode] = false;
+                for(var i=0;i<this.keyboard.listeners.length;++i) {
+                    this.keyboard.listeners[i](event, false);
+                }
             }.bind(this);
             var lockChangeCallback = function() {
                 if (document.pointerLockElement === element ||
@@ -159,6 +175,8 @@ define([], function() {
                 element.addEventListener('click', lock, false);
                 element.addEventListener('mousedown', mouseDown, false);
                 element.addEventListener('mouseup', mouseUp, false);
+                window.addEventListener('keydown', keyDown, false);
+                window.addEventListener('keyup', keyUp, false);
                 window.addWheelListener(element, mouseWheel, false);
             } else {
                 console.log('Cannot lock mouse');
@@ -168,6 +186,9 @@ define([], function() {
         reset: function() {
             this.mouse.move = false;
             this.mouse.rel.x = this.mouse.rel.y = this.mouse.rel.z = 0;
+        },
+        isKeyDown: function(keyCode) {
+            return this.keyboard.keys[keyCode] || false;
         }
     }
 });

@@ -3,6 +3,7 @@ define(['game/render', 'game/camera', 'game/cursor', 'game/spacebox', 'game/spac
     return {
         start: function() {
             render.camera = new Camera(null, 10);
+            render.frameListeners.push(render.camera.update);
             render.start(function(){
                 var spacebox = new Spacebox(render);
 
