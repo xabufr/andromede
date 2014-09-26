@@ -89,5 +89,6 @@ define(['three', 'game/input', 'game/spaceShipControl', 'SPE', '../core/core'], 
                 weapon.update(core, delta);
             }
         }
+        this.network = null;
     }
 });
