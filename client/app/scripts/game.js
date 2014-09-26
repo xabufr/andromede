@@ -12,6 +12,8 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
                 var weapon = new Weapon(Core.objectsNode, Core, this.laserPool);
                 weapon.mesh.position.x = 6;
                 weapon.network = network;
+                //weapon.mesh.rotation.z = Math.PI / 2;
+                weapon.mesh.rotation.y = Math.PI / 2;
                 var weapon2 = new Weapon(Core.objectsNode, Core, this.laserPool);
                 weapon2.mesh.position.set(0, 10,0);
                 var weapon2 = new Weapon(Core.objectsNode, Core, this.laserPool);

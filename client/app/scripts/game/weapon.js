@@ -24,6 +24,6 @@ define(['three', './laser/lasershot', 'Howler'], function(THREE, LaserShot, Howl
             lastFire += delta;
         };
         this.isFiring = false;
-        this.network = false;
+        this.network = null;
     };
 });
