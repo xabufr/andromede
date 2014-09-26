@@ -53,6 +53,7 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
         particleGroup.addEmitter(particleEmitter);
         var weapon, maxLength, lifeTime, currentLifeTime;
         var node = new THREE.Object3D();
+        var percute = false;
 
         this.laser = new BasicLaser();
         this.laser.mesh.position.set(0,0,0);
@@ -84,6 +85,7 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
             lifeTime = p_lifeTime;
             currentLifeTime = 0;
             particleEmitter.alive = 1.0;
+            percute = false;
 
             weapon.mesh.updateMatrixWorld(true);
             var matrixWorld = weapon.mesh.matrixWorld.clone();
@@ -102,7 +104,6 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
             raycaster.far = maxLength;
             var intersects = raycaster.intersectObjects(core.objectsNode.children, true);
             var scale = maxLength;
-            var percute = false;
             if(intersects.length > 0) {
                 for(var i=0; i < intersects.length; ++i) {
                     var currentMesh = intersects[i].object;
@@ -126,6 +127,15 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
         };
         this.isFree = function() {
             return !this.laser.mesh.visible;
+        };
+
+        this.serialize = function() {
+            return {
+                scale: this.laser.mesh.scale.x,
+                position: node.position,
+                rotation: node.quaternion,
+                hit: percute !== false
+            };
         };
     }
 });

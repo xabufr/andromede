@@ -58,5 +58,6 @@ define(['three', 'game/input', 'game/spaceShipControl', 'SPE', '../core/core'], 
             this.enginePower += value;
             this.enginePower = Math.min(1, Math.max(0, this.enginePower));
         };
+        this.network = null;
     }
 });
