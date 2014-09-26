@@ -1,12 +1,12 @@
 define(['three', './laser/lasershot', 'Howler'], function(THREE, LaserShot, Howler) {
     'use strict';
-    var count = 0;
-    return function Weapon(parent, core, laserPool) {
+    var count = 1;
+    return function Weapon(core, laserPool) {
         var lastFire = 0;
-        this.mesh = new THREE.Mesh(core.assetsLoader.get('weapon').geometry, new THREE.MeshBasicMaterial({color: 'white'}));
-        this.mesh.name = 'weapon'+count++;
+        this.mesh = new THREE.Mesh(core.assetsLoader.get('mainWeapon').geometry,
+            new THREE.MeshFaceMaterial(core.assetsLoader.get('mainWeapon').materials));
+        this.mesh.name = 'mainWeapon'+count++;
         this.imprecision = Math.PI / 16;
-        parent.add(this.mesh);
         this.tirer = function() {
             lastFire = 0;
             var laser = laserPool.get();
