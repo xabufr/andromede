@@ -3,6 +3,6 @@ define([], function(){
 
     return {
         spaceShip: "assets/models/spaceShip.js",
-        weapon: "assets/models/weapon.js"
+        mainWeapon: "assets/models/weapon.js"
     }
 });

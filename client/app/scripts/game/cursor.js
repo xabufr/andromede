@@ -1,7 +1,7 @@
 define(['three'], function (THREE){
    return function Cursor () {
         this.sprite = document.getElementById("cursor");
-        this.minDistance = 40;
+        this.minDistance = 70;
         this.move = function(render) {
             var input = render.input;
             this.sprite.style.left = (input.mouse.abs.x - (32 / 2))+'px';

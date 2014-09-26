@@ -9,29 +9,16 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
 
                 var spacebox = new Spacebox(Core);
 
-                var weapon = new Weapon(Core.objectsNode, Core, this.laserPool);
-                weapon.mesh.position.x = 6;
-                weapon.network = network;
-                //weapon.mesh.rotation.z = Math.PI / 2;
-                weapon.mesh.rotation.y = Math.PI / 2;
-                var weapon2 = new Weapon(Core.objectsNode, Core, this.laserPool);
-                weapon2.mesh.position.set(0, 10,0);
-                var weapon2 = new Weapon(Core.objectsNode, Core, this.laserPool);
-                weapon2.mesh.position.set(10, 0,0);
-                var spaceShip = new SpaceShip(Core);
-                spaceShip.network = network;
-                Core.frameListeners.push(function(_, delta) {
-                    weapon.isFiring = Core.input.mouse.buttons.left;
-                    weapon.update(_, delta);
-                    network.sendPosition(spaceShip);
-                });
-
-                var sunLight = new THREE.PointLight(0xffffff, 1.0, 50);
-                sunLight.position.set(20, 20, 0);
+                var sunLight = new THREE.PointLight(0xffffff, 5.0, 50);
+                sunLight.position.set(10, 10, 0);
                 sunLight.shadowCameraFar = 10;
                 sunLight.shadowCameraNear = 50;
 
                 Core.scene.add(sunLight);
+
+                var spaceShip = new SpaceShip(Core);
+                spaceShip.setWeapon(new Weapon(Core, this.laserPool));
+                spaceShip.setWeapon(new Weapon(Core, this.laserPool));
 
                 Core.camera.setTarget(spaceShip.mesh);
 
