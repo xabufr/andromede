@@ -6,11 +6,49 @@
             margin: 0;
             overflow: hidden;
         }
+        #cursor {
+            z-index: 1000;
+        }
+        #chat-input {
+            width: 250px;
+            height: 1.5em;
+            display: none;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+        }
+        #chat-messages {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 300px;
+            word-wrap: break-word;
+        }
+        #chat-messages-container {
+            width: 300px;
+            overflow: hidden;
+            position: absolute;
+            left: 0;
+            bottom: 1.5em;
+            height: 250px;
+        }
+        #chat-messages .pseudo {
+            color: #ff0000;
+        }
+        #chat-messages .pseudo:after {
+            content: ': ';
+        }
     </style>
 </head>
 <body>
 <script src="../bower_components/requirejs/require.js"></script>
 <script src="scripts/config.js"></script>
 <div id="cursor" style="background: url('assets/textures/cursor.png') repeat scroll 0% 0% transparent; width: 32px; height: 32px; position: absolute"></div>
+<div id="ui">
+    <div id="chat-messages-container">
+        <div id="chat-messages"></div>
+    </div>
+    <input id="chat-input" value="" type="text"/>
+</div>
 </body>
 </html>

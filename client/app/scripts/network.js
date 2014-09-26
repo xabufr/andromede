@@ -10,7 +10,7 @@ define(['SocketIO'], function(io) {
         });
 
         this.socket.on('player list', function(list) {
-            for(var i=0; i<list; ++i) {
+            for(var i=0; i<list.length; ++i) {
                 var player = list[i];
                 var id = player.id;
                 players[id] = player;

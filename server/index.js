@@ -22,10 +22,15 @@
         clients[socket.id] = userData;
         socket.on('new player', function (data) {
             userData.name = data.name;
-            console.log(data);
-            socket.emit('player list', {
-
-            });
+            console.log('New player: ' + data.name);
+            var playerList = [];
+            for(var index in clients) {
+                playerList.push({
+                    id: index,
+                    name: userData.name
+                });
+            }
+            socket.emit('player list',  playerList);
         });
         var pingInterval = setInterval(function () {
             socket.emit('ping', now());
@@ -34,6 +39,7 @@
             userData.ping = now() - date;
         });
         socket.on('disconnect', function () {
+            console.log('Bye player ' + userData.name);
             socket.broadcast.emit('bye player', {
                 id: socket.id
             });
@@ -53,7 +59,7 @@
                 message: message,
                 player: socket.id
             };
-            socket.broadcast.emit('chat', mesData);
+            io.emit('chat', mesData);
         });
     });
 })();

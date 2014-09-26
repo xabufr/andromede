@@ -1,4 +1,4 @@
-define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', 'game/spaceShip', 'game/weapon', 'game/laser/lasershot', 'core/pool'], function(Core, NetworkEngine, Camera, Cursor, Spacebox, SpaceShip,Weapon, laser, Pool) {
+define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', 'game/spaceShip', 'game/weapon', 'game/laser/lasershot', 'core/pool', './game/ui/uiMain'], function(Core, NetworkEngine, Camera, Cursor, Spacebox, SpaceShip,Weapon, laser, Pool, UI) {
     'use strict';
     return {
         start: function() {
@@ -6,6 +6,7 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
             Core.frameListeners.push(Core.camera.update);
             Core.start(function(){
                 var network = new NetworkEngine(this);
+                var ui = new UI(Core, network);
 
                 var spacebox = new Spacebox(Core);
 
