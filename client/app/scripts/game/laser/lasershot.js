@@ -79,6 +79,8 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
 
         core.frameListeners.push(update);
 
+        var randomRotation = new THREE.Matrix4();
+
         this.init = function(p_weapon,p_length,p_lifeTime) {
             weapon = p_weapon;
             maxLength = p_length;
@@ -90,7 +92,8 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
             weapon.mesh.updateMatrixWorld(true);
             var matrixWorld = weapon.mesh.matrixWorld.clone();
 
-            matrixWorld.makeRotationAxis(new THREE.Vector3(Math.random(), Math.random(), Math.random()).normalize(), (Math.random() - 0.5) * weapon.imprecision);
+            randomRotation.makeRotationAxis(new THREE.Vector3(Math.random(), Math.random(), Math.random()).normalize(), (Math.random() - 0.5) * weapon.imprecision);
+            matrixWorld.multiply(randomRotation);
 
             node.position.set(0,0,0);
             node.rotation.setFromRotationMatrix(matrixWorld);
