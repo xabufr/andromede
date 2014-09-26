@@ -89,10 +89,24 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
             particleEmitter.alive = 1.0;
             percute = false;
 
-            weapon.mesh.updateMatrixWorld(true);
-            var matrixWorld = weapon.mesh.matrixWorld.clone();
+
+            var matrixWorld = null;
+            for (var i=0; i < weapon.mesh.skeleton.bones.length; ++i) {
+                var bone = weapon.mesh.skeleton.bones[i];
+                if (bone.name === 'fire') {
+                    bone.updateMatrixWorld(true);
+                    matrixWorld = bone.matrixWorld.clone();
+                }
+            }
+
+            if (matrixWorld === null) {
+                return;
+            }
 
             randomRotation.makeRotationAxis(new THREE.Vector3(Math.random(), Math.random(), Math.random()).normalize(), (Math.random() - 0.5) * weapon.imprecision);
+            matrixWorld.multiply(randomRotation);
+
+            randomRotation.makeRotationAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
             matrixWorld.multiply(randomRotation);
 
             node.position.set(0,0,0);
