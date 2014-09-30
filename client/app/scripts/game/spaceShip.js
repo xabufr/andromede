@@ -1,32 +1,31 @@
 define(['three', 'game/input', 'game/spaceShipControl', 'SPE', '../core/core'], function(THREE, input, SpaceShipControl, SPE, Core) {
     'use strict';
     var count = 1;
-    var engineParticleGroup = new SPE.Group({
-        texture: THREE.ImageUtils.loadTexture('assets/textures/smokeparticle.png'),
-        maxAge: 1
-    });
-    var engineParticleSettings = {
-        type: 'cube',
-        velocitySpread: new THREE.Vector3(1, 1, 1),
-        sizeStart: 0.5,
-        sizeStartSpread: 1,
-        sizeEnd: 0,
-        opacityStart: 1,
-        opacityEnd: 0,
-        colorStart: new THREE.Color(0xFF9933),
-        colorEnd: new THREE.Color(0xFFFF00),
-        particleCount: 1000,
-        particlesPerSecond: 25,
-        alive: 1
-    };
-    engineParticleGroup.mesh.frustumCulled = false;
-    Core.effectsNode.add(engineParticleGroup.mesh);
-    Core.frameListeners.push(function(core, delta) {
-        engineParticleGroup.tick(delta);
-    });
 
     return function SpaceShip(core){
-        var emitter = new SPE.Emitter(engineParticleSettings);
+        var engineParticleGroup = new SPE.Group({
+            texture: THREE.ImageUtils.loadTexture('assets/textures/smokeparticle.png'),
+            maxAge: 1
+        });
+        engineParticleGroup.mesh.frustumCulled = false;
+        core.effectsNode.add(engineParticleGroup.mesh);
+        core.frameListeners.push(function(core, delta) {
+            engineParticleGroup.tick(delta);
+        });
+        var emitter = new SPE.Emitter({
+            type: 'cube',
+            velocitySpread: new THREE.Vector3(1, 1, 1),
+            sizeStart: 0.5,
+            sizeStartSpread: 1,
+            sizeEnd: 0,
+            opacityStart: 1,
+            opacityEnd: 0,
+            colorStart: new THREE.Color(0xFF9933),
+            colorEnd: new THREE.Color(0xFFFF00),
+            particleCount: 1000,
+            particlesPerSecond: 25,
+            alive: 1
+        });
         engineParticleGroup.addEmitter(emitter);
         this.mesh = new THREE.SkinnedMesh(core.assetsLoader.get('spaceShip').geometry,
             new THREE.MeshFaceMaterial(core.assetsLoader.get('spaceShip').materials));
@@ -41,6 +40,7 @@ define(['three', 'game/input', 'game/spaceShipControl', 'SPE', '../core/core'], 
         var maxVelocity = 5;
 
         core.objectsNode.add(this.mesh);
+
         this.move = function(core, delta) {
             for (var i=0; i < this.mesh.skeleton.bones.length; ++i){
                 var bone = this.mesh.skeleton.bones[i];
@@ -88,7 +88,11 @@ define(['three', 'game/input', 'game/spaceShipControl', 'SPE', '../core/core'], 
                 weapon.isFiring = core.input.mouse.buttons.left;
                 weapon.update(core, delta);
             }
+        };
+        this.setState = function(state) {
+            this.mesh.position.copy(state.position);
+            this.mesh.quaternion.copy(state.rotation);
+            this.enginePower = state.enginePower;
         }
-        this.network = null;
     }
 });

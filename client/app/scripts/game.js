@@ -5,7 +5,20 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
             Core.camera = new Camera(null, 10);
             Core.frameListeners.push(Core.camera.update);
             Core.start(function(){
+                var players = {};
                 var network = new NetworkEngine(this);
+                network.onNewPlayer = function(player) {
+                    players[player.id] = {};
+                };
+                network.onPlayerSpawn = function(player, spawn) {
+                    players[player.id].ship = new SpaceShip(Core);
+                };
+                network.onPosition = function(player, positionData) {
+                    if(players[player.id].ship) {
+                        players[player.id].ship.setState(positionData);
+                    }
+                };
+
                 var ui = new UI(Core, network);
 
                 var spacebox = new Spacebox(Core);
@@ -20,13 +33,24 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
                 var spaceShip = new SpaceShip(Core);
                 spaceShip.setWeapon(new Weapon(Core, this.laserPool));
                 spaceShip.setWeapon(new Weapon(Core, this.laserPool));
+                network.spawn(spaceShip);
 
                 Core.camera.setTarget(spaceShip.mesh);
 
                 Core.cursor = new Cursor(Core.scene);
 
-                Core.frameListeners.push(spaceShip.move);
-                Core.frameListeners.push(Core.cursor.move);
+                Core.frameListeners.push(function(Core, delta) {
+                    spaceShip.move(Core, delta);
+                    network.update(Core, delta);
+                    Core.cursor.move(Core, delta);
+                    var keys = Object.keys(players);
+                    for(var i=0;i<keys.length;++i) {
+                        var key = keys[i];
+                        if(players[key].ship) {
+                            players[key].ship.move(Core, delta);
+                        }
+                    }
+                }.bind(this));
             }.bind(this));
         },
         laserPool: new Pool(laser, 5, Core)

@@ -17,20 +17,37 @@
     var clients = {};
     io.on('connection', function (socket) {
         var userData = {
-            socket: socket
+            socket: socket,
+            spaceship: null
         };
         clients[socket.id] = userData;
         socket.on('new player', function (data) {
             userData.name = data.name;
             console.log('New player: ' + data.name);
             var playerList = [];
+            var spawnData = [];
             for(var index in clients) {
+                var client = clients[index];
                 playerList.push({
                     id: index,
-                    name: userData.name
+                    name: client.name
                 });
+                if(client.spaceship) {
+                    spawnData.push({
+                        player: index,
+                        maxVelocity: client.spaceship.maxVelocity
+                    });
+                }
             }
+            socket.emit('set id', socket.id);
             socket.emit('player list',  playerList);
+            for(var i=0; i<spawnData.length;++i) {
+                socket.emit('spawn', spawnData[i]);
+            }
+            socket.broadcast.emit('new player', {
+                name: data.name,
+                id: socket.id
+            });
         });
         var pingInterval = setInterval(function () {
             socket.emit('ping', now());
@@ -48,6 +65,7 @@
         });
         socket.on('position', function(data) {
             data.player = socket.id;
+            userData.spaceship.position = data;
             socket.broadcast.emit('position', data);
         });
         socket.on('shot', function(shot) {
@@ -60,6 +78,19 @@
                 player: socket.id
             };
             io.emit('chat', mesData);
+        });
+        socket.on('spawn', function(data) {
+            userData.spaceship = {
+                position: null,
+                maxVelocity: data.maxVelocity
+            };
+            data.player = socket.id;
+            socket.broadcast.emit('spawn', data);
+        });
+        socket.on('die', function(data) {
+            userData.spaceship = null;
+            data.player = socket.id;
+            socket.broadcast.emit('die', data);
         });
     });
 })();
