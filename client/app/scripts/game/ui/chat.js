@@ -1,4 +1,4 @@
-define(['Move'], function(move) {
+define([], function() {
     function Chat(Main, Core) {
         this.main = Main;
         this.core = Core;
@@ -39,15 +39,16 @@ define(['Move'], function(move) {
     };
     Chat.prototype.addMessage = function(message) {
         var messageElement = document.createElement('div');
+        messageElement.className = 'message';
         var pseudo = document.createElement('span');
         pseudo.appendChild(document.createTextNode(message.player.name));
         pseudo.className = 'pseudo';
         messageElement.appendChild(pseudo);
         messageElement.appendChild(document.createTextNode(message.message));
         this.chatElement.appendChild(messageElement);
-        move(this.chatElement).set('background-color', 'rgba(200, 200, 200, 0.8').duration(250).end(function() {
-            move(this.chatElement).set('background-color', 'rgba(200, 200, 200, 0.3').duration(2000).end();
-        }.bind(this));
+        setTimeout(function() {
+            this.chatElement.removeChild(messageElement);
+        }.bind(this), 5000);
     };
 
     return Chat;
