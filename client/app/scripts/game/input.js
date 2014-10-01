@@ -166,6 +166,9 @@ define([], function() {
                 this.mouse.abs.incrementWheel(e.deltaY);
                 this.mouse.rel.z = e.deltaY;
             }.bind(this);
+            var contextMenu = function(e) {
+                e.preventDefault();
+            }.bind(this);
             if(havePointerLock) {
                 element.requestPointerLock = element.requestPointerLock ||
                     element.mozRequestPointerLock ||
@@ -180,6 +183,7 @@ define([], function() {
                 element.addEventListener('click', lock, false);
                 element.addEventListener('mousedown', mouseDown, false);
                 element.addEventListener('mouseup', mouseUp, false);
+                element.addEventListener('contextmenu', contextMenu, false);
                 window.addEventListener('keydown', keyDown, false);
                 window.addEventListener('keyup', keyUp, false);
                 window.addWheelListener(element, mouseWheel, false);
