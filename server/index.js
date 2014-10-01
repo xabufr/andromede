@@ -5,11 +5,11 @@
     var app = express();
     var http = require('http').Server(app);
     var io = require('socket.io')(http);
-    var now = require("performance-now")
+    var now = require("performance-now");
 
     var port = 8080;
     app.use(compress());
-    app.use('/', express.static('../client/'));
+    app.use('/', express.static(__dirname + '/../client/'));
     http.listen(port, function () {
         console.log('Start server on port 8080');
     });

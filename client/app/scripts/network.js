@@ -4,6 +4,9 @@ define(['SocketIO'], function(io) {
         var parameters = _parameters || {};
         var players = {};
         this.socket = new io();
+        this.socket.on('disconnect', function() {
+            this.socket = null;
+        }.bind(this));
         this.id = null;
         this.socket.on('set id', function(id) {
             this.id = id;
