@@ -52,7 +52,7 @@ define(['three', 'SPE'], function(THREE, SPE) {
         this.weaponUpdate = function(core,delta) {
             for (var i=0; i < this.weapons.length; ++i) {
                 var weapon = this.weapons[i];
-                weapon.isFiring = core.input.mouse.buttons.left;
+                weapon.isFiring = this.isReallyShotting;
                 weapon.update(core, delta);
             }
         };
@@ -62,6 +62,8 @@ define(['three', 'SPE'], function(THREE, SPE) {
         this.enginePower += value;
         this.enginePower = Math.min(1, Math.max(0, this.enginePower));
     };
+
+    SpaceShip.prototype.isReallyShotting = false;
 
     SpaceShip.prototype.serialize = function() {
         var state = {
@@ -92,8 +94,6 @@ define(['three', 'SPE'], function(THREE, SPE) {
                 this.engineParticleEmitter.alive = this.enginePower;
             }
         }
-        var input = core.input;
-
         var deplacement = delta * this.maxVelocity * this.enginePower;
         this.mesh.translateZ(deplacement);
 

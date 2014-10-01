@@ -70,7 +70,6 @@ define(['SocketIO'], function(io) {
         this.findPlayerByMessage = function(message) {
             return players[message.player];
         };
-        this.game = Game;
     };
     NetworkEngine.prototype.spaceship = null;
     NetworkEngine.prototype.chatMessageListeners = [];

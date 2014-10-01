@@ -20,6 +20,7 @@ define([], function(){
             this.ship.turnUpDown(this.maxRotation * delta * percentx);
             this.ship.turnRightLeft(-(this.maxRotation * delta * percenty));
         }
+        this.ship.isReallyShotting = core.input.mouse.buttons.left;
     };
 
     return SpaceShipControl;
