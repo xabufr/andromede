@@ -15,7 +15,7 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
                 };
                 network.onPosition = function(player, positionData) {
                     if(players[player.id].ship) {
-                        players[player.id].ship.setState(positionData);
+                        players[player.id].ship.deserialize(positionData);
                     }
                 };
 
@@ -40,14 +40,14 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
                 Core.cursor = new Cursor(Core.scene);
 
                 Core.frameListeners.push(function(Core, delta) {
-                    spaceShip.move(Core, delta);
+                    spaceShip.update(Core, delta);
                     network.update(Core, delta);
                     Core.cursor.move(Core, delta);
                     var keys = Object.keys(players);
                     for(var i=0;i<keys.length;++i) {
                         var key = keys[i];
                         if(players[key].ship) {
-                            players[key].ship.move(Core, delta);
+                            players[key].ship.update(Core, delta);
                         }
                     }
                 }.bind(this));

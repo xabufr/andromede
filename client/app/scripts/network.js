@@ -71,20 +71,7 @@ define(['SocketIO'], function(io) {
 
     NetworkEngine.prototype.sendPosition = function() {
         if(this.spaceship != null) {
-            this.socket.emit('position', {
-                position: {
-                    x: this.spaceship.mesh.position.x,
-                    y: this.spaceship.mesh.position.y,
-                    z: this.spaceship.mesh.position.z
-                },
-                rotation: {
-                    x: this.spaceship.mesh.quaternion.x,
-                    y: this.spaceship.mesh.quaternion.y,
-                    z: this.spaceship.mesh.quaternion.z,
-                    w: this.spaceship.mesh.quaternion.w
-                },
-                enginePower: this.spaceship.enginePower
-            });
+            this.socket.emit('position', this.spaceship.serialize());
         }
     };
 
