@@ -7,7 +7,7 @@
     var io = require('socket.io')(http);
     var now = require("performance-now");
 
-    var port = 80;
+    var port = process.env.PORT || 8080;
     app.use(compress());
     app.use('/', express.static(__dirname + '/../client/'));
     http.listen(port, function () {
