@@ -1,4 +1,4 @@
-define(['three', 'game/input', 'game/spaceShipControl', 'SPE', '../core/core'], function(THREE, input, SpaceShipControl, SPE) {
+define(['three', 'SPE'], function(THREE, SPE) {
     'use strict';
     var count = 1;
 
@@ -30,7 +30,6 @@ define(['three', 'game/input', 'game/spaceShipControl', 'SPE', '../core/core'], 
         this.mesh.material.skinning = true;
         this.mesh.name = 'spaceShip'+count++;
         this.weapons = [];
-        this.control = new SpaceShipControl(this);
         this.enginePower = 0.0;
 
          this.maxVelocity = 5;
@@ -97,20 +96,19 @@ define(['three', 'game/input', 'game/spaceShipControl', 'SPE', '../core/core'], 
         var deplacement = delta * this.maxVelocity * this.enginePower;
         this.mesh.translateZ(deplacement);
 
-        if (!core.cursor.isInNoneActionArea()) {
-            var percenty = input.mouse.abs.x / window.innerWidth - 0.5;
-            var percentx = input.mouse.abs.y / window.innerHeight - 0.5;
-
-            this.control.changePitch(percentx, delta);
-            this.control.changeRoll(percenty, delta);
-        }
-
         this.weaponUpdate(core, delta);
-        this.control.update(core, delta);
     };
 
     SpaceShip.prototype.destroy = function () {
 
+    };
+
+    SpaceShip.prototype.turnUpDown = function(percent) {
+        this.mesh.rotateX(percent);
+    };
+
+    SpaceShip.prototype.turnRightLeft = function(percent) {
+        this.mesh.rotateY(percent);
     };
 
     return SpaceShip;
