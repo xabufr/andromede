@@ -56,11 +56,53 @@ define(['three', 'SPE'], function(THREE, SPE) {
                 weapon.update(core, delta);
             }
         };
+        this.physic = {
+            engine: {
+                power: 0,
+                velocity: 0
+            },
+            rotation: {
+                x: {
+                    power: 0,
+                    velocity: 0
+                },
+                y: {
+                    power: 0,
+                    velocity: 0
+                }
+            },
+            copy: function(other) {
+                this.engine.power = other.engine.power;
+                this.engine.velocity = other.engine.velocity;
+                this.rotation.x.power = other.rotation.x.power;
+                this.rotation.x.velocity = other.rotation.x.velocity;
+                this.rotation.y.power = other.rotation.y.power;
+                this.rotation.y.velocity = other.rotation.y.velocity;
+            }
+        };
+
+        this.modelProperties = {
+            engine: {
+                max: 10,
+                acceleration: 2.5
+            },
+            maniability: {
+                max: {
+                    x: Math.PI / 2,
+                    y: Math.PI / 2
+                },
+                accelertion: {
+                    x: Math.PI * 0.3,
+                    y: Math.PI * 0.3
+                }
+            }
+        };
     }
 
+
     SpaceShip.prototype.incrementEnginePower = function(value) {
-        this.enginePower += value;
-        this.enginePower = Math.min(1, Math.max(0, this.enginePower));
+        this.physic.engine.power += value;
+        this.physic.engine.power = Math.min(1, Math.max(0, this.physic.engine.power));
     };
 
     SpaceShip.prototype.isReallyShotting = false;
@@ -74,7 +116,7 @@ define(['three', 'SPE'], function(THREE, SPE) {
                 z: this.mesh.quaternion.z,
                 w: this.mesh.quaternion.w
             },
-            enginePower: this.enginePower
+            physic: this.physic
         };
         return state;
     };
@@ -82,8 +124,17 @@ define(['three', 'SPE'], function(THREE, SPE) {
     SpaceShip.prototype.deserialize = function(state) {
         this.mesh.position.copy(state.position);
         this.mesh.quaternion.copy(state.rotation);
-        this.enginePower = state.enginePower;
+        this.physic.copy(state.physic);
     };
+
+    function computeNewVelocity(max, acceleration, physic, delta) {
+        var targetVelocity = physic.power * max;
+        var diff = (physic.velocity - targetVelocity);
+        if (Math.abs(diff) > acceleration * delta) {
+            diff = acceleration * (diff > 0 ? 1 : -1);
+        }
+        return physic.velocity - diff * delta;
+    }
 
     SpaceShip.prototype.update = function(core, delta) {
         this.engineParticleGroup.tick(delta);
@@ -91,10 +142,16 @@ define(['three', 'SPE'], function(THREE, SPE) {
             var bone = this.mesh.skeleton.bones[i];
             if (bone.name === 'engine1') {
                 this.engineParticleEmitter.position.setFromMatrixPosition(bone.matrixWorld);
-                this.engineParticleEmitter.alive = this.enginePower;
+                this.engineParticleEmitter.alive = this.physic.engine.power;
             }
         }
-        var deplacement = delta * this.maxVelocity * this.enginePower;
+        this.physic.rotation.x.velocity = computeNewVelocity(this.modelProperties.maniability.max.x, this.modelProperties.maniability.accelertion.x, this.physic.rotation.x, delta);
+        this.physic.rotation.y.velocity = computeNewVelocity(this.modelProperties.maniability.max.y, this.modelProperties.maniability.accelertion.y, this.physic.rotation.y, delta);
+        this.mesh.rotateX(this.physic.rotation.x.velocity * delta);
+        this.mesh.rotateY(this.physic.rotation.y.velocity * delta);
+
+        this.physic.engine.velocity = computeNewVelocity(this.modelProperties.engine.max, this.modelProperties.engine.acceleration, this.physic.engine, delta);
+        var deplacement = delta * this.physic.engine.velocity;
         this.mesh.translateZ(deplacement);
 
         this.weaponUpdate(core, delta);
@@ -106,11 +163,11 @@ define(['three', 'SPE'], function(THREE, SPE) {
     };
 
     SpaceShip.prototype.turnUpDown = function(percent) {
-        this.mesh.rotateX(percent);
+        this.physic.rotation.x.power = percent;
     };
 
     SpaceShip.prototype.turnRightLeft = function(percent) {
-        this.mesh.rotateY(percent);
+        this.physic.rotation.y.power = percent;
     };
 
     return SpaceShip;

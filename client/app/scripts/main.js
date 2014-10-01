@@ -1,3 +1,3 @@
-define(['game', 'SocketIO'], function(game, IO){
+define(['game'], function(game){
     game.start();
 });
