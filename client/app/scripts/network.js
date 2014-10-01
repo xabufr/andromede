@@ -57,6 +57,16 @@ define(['SocketIO'], function(io) {
             }
         }.bind(this));
 
+        this.socket.on('bye player', function(playerId) {
+            var player = players[playerId];
+            if(player) {
+                if(this.onByePlayer) {
+                    this.onByePlayer(player);
+                }
+                delete players[playerId];
+            }
+        }.bind(this));
+
         this.findPlayerByMessage = function(message) {
             return players[message.player];
         };

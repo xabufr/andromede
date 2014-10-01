@@ -18,6 +18,12 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
                         players[player.id].ship.deserialize(positionData);
                     }
                 };
+                network.onByePlayer = function(player) {
+                    var spaceship = players[player.id].ship;
+                    if(spaceship) {
+                        spaceship.remove();
+                    }
+                };
 
                 var ui = new UI(Core, network);
 

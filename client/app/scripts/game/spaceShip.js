@@ -8,6 +8,7 @@ define(['three', 'SPE'], function(THREE, SPE) {
             maxAge: 1
         });
         this.engineParticleGroup.mesh.frustumCulled = false;
+        this.core = core;
         core.effectsNode.add(this.engineParticleGroup.mesh);
         this.engineParticleEmitter = new SPE.Emitter({
             type: 'cube',
@@ -32,7 +33,7 @@ define(['three', 'SPE'], function(THREE, SPE) {
         this.weapons = [];
         this.enginePower = 0.0;
 
-         this.maxVelocity = 5;
+        this.maxVelocity = 5;
 
         core.objectsNode.add(this.mesh);
 
@@ -99,8 +100,9 @@ define(['three', 'SPE'], function(THREE, SPE) {
         this.weaponUpdate(core, delta);
     };
 
-    SpaceShip.prototype.destroy = function () {
-
+    SpaceShip.prototype.remove = function () {
+        this.core.objectsNode.remove(this.mesh);
+        this.core.effectsNode.remove(this.engineParticleGroup);
     };
 
     SpaceShip.prototype.turnUpDown = function(percent) {

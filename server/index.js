@@ -57,9 +57,7 @@
         });
         socket.on('disconnect', function () {
             console.log('Bye player ' + userData.name);
-            socket.broadcast.emit('bye player', {
-                id: socket.id
-            });
+            io.emit('bye player', socket.id);
             clearInterval(pingInterval);
             delete clients[socket.id];
         });
