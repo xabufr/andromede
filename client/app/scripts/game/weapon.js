@@ -6,7 +6,7 @@ define(['three', './laser/lasershot', 'Howler'], function(THREE, LaserShot, Howl
         this.mesh = new THREE.SkinnedMesh(core.assetsLoader.get('mainWeapon').geometry,
             new THREE.MeshFaceMaterial(core.assetsLoader.get('mainWeapon').materials));
         this.mesh.name = 'mainWeapon'+count++;
-        this.imprecision = 0;//Math.PI / 16;
+        this.imprecision = Math.PI / 64;
         this.tirer = function() {
             lastFire = 0;
             var laser = laserPool.get();
