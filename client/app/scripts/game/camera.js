@@ -12,7 +12,7 @@ define(['three'], function(THREE){
             if(core.input.isKeyDown(86)) {
                 coef = -1;
             }
-            this.threeCamera.position.set(0, 0, -this.distance * coef);
+            this.threeCamera.position.set(0, 2, -this.distance * coef);
             this.threeCamera.lookAt(new THREE.Vector3(0,0,0));
         }.bind(this);
 

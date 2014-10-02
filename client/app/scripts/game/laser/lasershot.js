@@ -122,7 +122,7 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
                         continue;
                     } else {
                         var position = intersects[i].point;
-                        var distance = position.distanceTo(weapon.mesh.position);
+                        var distance = position.distanceTo(weapon.mesh.localToWorld(new THREE.Vector3(0,0,0)));
                         if(distance < maxLength) {
                             scale = distance;
                             percute = {
@@ -135,6 +135,7 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
                 }
             }
             weapon.mesh.localToWorld(node.position);
+            console.log(scale);
 
             this.initFromData(p_weapon, p_lifeTime, {
                 position: node.position,
@@ -154,8 +155,9 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
             this.laser.mesh.visible = true;
             node.position.copy(data.position);
             node.quaternion.copy(data.rotation);
-            this.laser.mesh.scale.x = data.scale;
+            this.laser.mesh.scale.set(data.scale, 1, 1);
             if(data.hit !== false) {
+                console.log(data.scale);
                 explosionGroup.triggerPoolEmitter(1, data.hit);
             } else {
             }
