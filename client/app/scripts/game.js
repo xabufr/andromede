@@ -10,9 +10,15 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
                 network.onNewPlayer = function(player) {
                     players[player.id] = {};
                 };
-                network.onPlayerSpawn = function(player, spawn) {
-                    players[player.id].ship = new SpaceShip(Core);
-                };
+                network.onPlayerSpawn = function(player, shipModel) {
+                    var spaceship = players[player.id].ship = new SpaceShip(Core);
+                    var weapon = new Weapon(Core, this.laserPool);
+                    weapon.mesh.name = 'mainWeapon1';
+                    spaceship.setWeapon(weapon);
+                    weapon = new Weapon(Core, this.laserPool);
+                    weapon.mesh.name = 'mainWeapon2';
+                    spaceship.setWeapon(weapon);
+                }.bind(this);
                 network.onPosition = function(player, positionData) {
                     if(players[player.id].ship) {
                         players[player.id].ship.deserialize(positionData);
@@ -22,6 +28,12 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
                     var spaceship = players[player.id].ship;
                     if(spaceship) {
                         spaceship.remove();
+                    }
+                };
+                network.onShot = function(player, shotData) {
+                    var spaceship = players[player.id].ship;
+                    if(spaceship) {
+                        spaceship.shotFromData(shotData);
                     }
                 };
 
@@ -40,6 +52,7 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
                 var control = new SpaceShipControl(spaceShip);
                 spaceShip.setWeapon(new Weapon(Core, this.laserPool));
                 spaceShip.setWeapon(new Weapon(Core, this.laserPool));
+                spaceShip.network = network;
                 network.spawn(spaceShip);
 
                 Core.camera.setTarget(spaceShip.mesh);

@@ -13,17 +13,20 @@ define(['three', './laser/lasershot', 'Howler'], function(THREE, LaserShot, Howl
             laser.init(this, 2000, 0.5);
             var sound = new Howler.Howl({urls: ['assets/sound/laser.mp3']});
             sound.play();
-            if(this.network !== null) {
-                this.network.sendShot(laser.serialize());
-            }
+            return laser;
         }.bind(this);
         this.update = function(_, delta) {
+            var shot = false;
             if(this.isFiring && lastFire >= 0.1) {
-                this.tirer();
+                shot = this.tirer();
             }
             lastFire += delta;
+            return shot;
+        };
+        this.shotFromData = function(shotData) {
+            var laser = laserPool.get();
+            laser.initFromData(this, 0.5, shotData);
         };
         this.isFiring = false;
-        this.network = null;
     };
 });

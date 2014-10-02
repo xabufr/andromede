@@ -81,14 +81,10 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
 
         var randomRotation = new THREE.Matrix4();
 
-        this.init = function(p_weapon,p_length,p_lifeTime) {
+        this.init = function(p_weapon, p_length, p_lifeTime) {
             weapon = p_weapon;
             maxLength = p_length;
-            lifeTime = p_lifeTime;
-            currentLifeTime = 0;
-            particleEmitter.alive = 1.0;
             percute = false;
-
 
             var matrixWorld = null;
             for (var i=0; i < weapon.mesh.skeleton.bones.length; ++i) {
@@ -111,8 +107,6 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
 
             node.position.set(0,0,0);
             node.rotation.setFromRotationMatrix(matrixWorld);
-            this.laser.resetMaterialColor();
-            this.initialColor = this.laser.material.color.clone();
 
             var raycaster = new THREE.Raycaster();
             raycaster.ray.origin.setFromMatrixPosition(matrixWorld);
@@ -130,18 +124,43 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
                         var position = intersects[i].point;
                         var distance = position.distanceTo(weapon.mesh.position);
                         if(distance < maxLength) {
-                            explosionGroup.triggerPoolEmitter(1, position);
                             scale = distance;
-                            percute = currentMesh;
+                            percute = {
+                                mesh: currentMesh,
+                                position: position
+                            };
                         }
                         break;
                     }
                 }
             }
-            this.laser.mesh.scale.set(scale, 1, 1);
-            this.laser.mesh.visible = true;
             weapon.mesh.localToWorld(node.position);
+
+            this.initFromData(p_weapon, p_lifeTime, {
+                position: node.position,
+                scale: scale,
+                rotation: node.quaternion,
+                hit: (percute === false ? false : percute.position)
+            });
         };
+
+        this.initFromData = function(p_weapon, p_lifeTime, data) {
+            particleEmitter.alive = 1.0;
+            currentLifeTime = 0;
+            weapon = p_weapon;
+            lifeTime = p_lifeTime;
+            this.laser.resetMaterialColor();
+            this.initialColor = this.laser.material.color.clone();
+            this.laser.mesh.visible = true;
+            node.position.copy(data.position);
+            node.quaternion.copy(data.rotation);
+            this.laser.mesh.scale.x = data.scale;
+            if(data.hit !== false) {
+                explosionGroup.triggerPoolEmitter(1, data.hit);
+            } else {
+            }
+        };
+
         this.isFree = function() {
             return !this.laser.mesh.visible;
         };
@@ -150,8 +169,13 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
             return {
                 scale: this.laser.mesh.scale.x,
                 position: node.position,
-                rotation: node.quaternion,
-                hit: percute !== false
+                rotation: {
+                    x: node.quaternion.x,
+                    y: node.quaternion.y,
+                    z: node.quaternion.z,
+                    w: node.quaternion.w
+                },
+                hit: (percute === false ? false : percute.position)
             };
         };
     }

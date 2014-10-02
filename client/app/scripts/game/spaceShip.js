@@ -31,13 +31,11 @@ define(['three', 'SPE'], function(THREE, SPE) {
         this.mesh.material.skinning = true;
         this.mesh.name = 'spaceShip'+count++;
         this.weapons = [];
-        this.enginePower = 0.0;
-
-        this.maxVelocity = 5;
 
         core.objectsNode.add(this.mesh);
 
         this.setWeapon = function(weapon) {
+            weapon.ship = this;
             var bones = this.mesh.skeleton.bones;
             for (var i=0; i < bones.length; ++i) {
                 if (bones[i].name == weapon.mesh.name) {
@@ -45,15 +43,23 @@ define(['three', 'SPE'], function(THREE, SPE) {
                     weapon.mesh.position.setFromMatrixPosition(bone.matrixWorld);
                     this.mesh.add(weapon.mesh);
                     this.weapons.push(weapon);
+                    return;
                 }
             }
+            throw 'Cannot attach weapon';
         };
 
         this.weaponUpdate = function(core,delta) {
             for (var i=0; i < this.weapons.length; ++i) {
                 var weapon = this.weapons[i];
                 weapon.isFiring = this.isReallyShotting;
-                weapon.update(core, delta);
+                var shot = weapon.update(core, delta);
+                if(shot !== false && this.network) {
+                    this.network.sendShot({
+                        weapon: i,
+                        shot: shot.serialize()
+                    });
+                }
             }
         };
         this.physic = {
@@ -97,15 +103,14 @@ define(['three', 'SPE'], function(THREE, SPE) {
                 }
             }
         };
+        this.isReallyShotting = false;
+        this.network = null;
     }
-
 
     SpaceShip.prototype.incrementEnginePower = function(value) {
         this.physic.engine.power += value;
         this.physic.engine.power = Math.min(1, Math.max(0, this.physic.engine.power));
     };
-
-    SpaceShip.prototype.isReallyShotting = false;
 
     SpaceShip.prototype.serialize = function() {
         var state = {
@@ -168,6 +173,13 @@ define(['three', 'SPE'], function(THREE, SPE) {
 
     SpaceShip.prototype.turnRightLeft = function(percent) {
         this.physic.rotation.y.power = percent;
+    };
+
+    SpaceShip.prototype.shotFromData = function(shotData) {
+        var weapon = this.weapons[shotData.weapon];
+        if(weapon) {
+            weapon.shotFromData(shotData.shot);
+        }
     };
 
     return SpaceShip;

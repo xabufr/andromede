@@ -70,6 +70,12 @@ define(['SocketIO'], function(io) {
             }
         }.bind(this));
 
+        this.socket.on('shot', function(shotData) {
+            if(this.onShot) {
+                this.onShot(this.findPlayerByMessage(shotData), shotData);
+            }
+        }.bind(this));
+
         this.findPlayerByMessage = function(message) {
             return players[message.player];
         };
@@ -80,6 +86,7 @@ define(['SocketIO'], function(io) {
     NetworkEngine.prototype.onByePlayer  = null;
     NetworkEngine.prototype.onPlayerSpawn = null;
     NetworkEngine.prototype.onPosition = null;
+    NetworkEngine.prototype.onShot = null;
 
     NetworkEngine.prototype.sendPosition = function() {
         if(this.spaceship != null) {
@@ -96,9 +103,7 @@ define(['SocketIO'], function(io) {
     };
     NetworkEngine.prototype.spawn = function(spaceship) {
         this.spaceship = spaceship;
-        this.socket.emit('spawn', {
-            maxVelocity: spaceship.maxVelocity
-        });
+        this.socket.emit('spawn', spaceship.modelProperties);
         this.sendPosition();
     };
     NetworkEngine.prototype.die = function() {

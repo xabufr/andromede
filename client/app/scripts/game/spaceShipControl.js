@@ -3,9 +3,6 @@ define([], function(){
         this.ship = ship;
     };
 
-    SpaceShipControl.prototype.maxRotation = Math.PI;
-
-
     SpaceShipControl.prototype.update = function(core, delta) {
         var powerValue = core.input.mouse.rel.z;
         if(powerValue != 0) {
