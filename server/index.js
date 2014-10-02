@@ -10,6 +10,9 @@
     var port = process.env.PORT || 8080;
     app.use(compress());
     app.use('/', express.static(__dirname + '/../client/'));
+    app.get('/', function(req, res) {
+        res.redirect('/app/index.html');
+    });
     http.listen(port, function () {
         console.log('Start server on port 8080');
     });
