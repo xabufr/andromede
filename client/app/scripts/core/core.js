@@ -9,13 +9,21 @@ define(['three', './../game/input', './assetsLoader', 'Stats'], function(THREE, 
     stats.domElement.style.position = 'absolute';
     stats.domElement.style.top = '0px';
     stats.domElement.style.left = '0px';
-    scene.add(objectsNode);
     scene.add(effetsNode);
-    var renderer = new THREE.WebGLRenderer();
+    scene.add(objectsNode);
+    var ambient = new THREE.AmbientLight( 0xffffff );
+    ambient.color.setHSL( 0.1, 0.3, 0.2 );
+    scene.add( ambient );
+    var renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: true
+    });
     renderer.autoClear = false;
     renderer.setClearColor(0x000000, 1.0);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMapEnabled = true;
+    renderer.gammaInput = true;
+    renderer.gammaOutput = true;
 
     var timer = new THREE.Clock();
 

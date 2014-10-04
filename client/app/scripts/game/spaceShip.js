@@ -26,7 +26,8 @@ define(['three', 'SPE'], function(THREE, SPE) {
         });
         this.engineParticleGroup.addEmitter(this.engineParticleEmitter);
         this.mesh = new THREE.SkinnedMesh(core.assetsLoader.get('spaceShip').geometry,
-            new THREE.MeshFaceMaterial(core.assetsLoader.get('spaceShip').materials));
+            new THREE.MeshFaceMaterial([new THREE.MeshPhongMaterial({ ambient: 0x333333, color: 0xffffff, specular: 0xffffff, shininess: 50 })]));
+        console.log(this.mesh.material);
         this.mesh.receiveShadow = true;
         this.mesh.material.skinning = true;
         this.mesh.name = 'spaceShip'+count++;
