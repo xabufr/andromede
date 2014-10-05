@@ -135,7 +135,6 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
                 }
             }
             weapon.mesh.localToWorld(node.position);
-            console.log(scale);
 
             this.initFromData(p_weapon, p_lifeTime, {
                 position: node.position,
@@ -157,7 +156,6 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
             node.quaternion.copy(data.rotation);
             this.laser.mesh.scale.set(data.scale, 1, 1);
             if(data.hit !== false) {
-                console.log(data.scale);
                 explosionGroup.triggerPoolEmitter(1, data.hit);
             } else {
             }
