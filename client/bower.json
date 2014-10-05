@@ -21,6 +21,7 @@
     "stats.js": "*",
     "socket.io-client": "~1.1.0",
     "tweenjs": "*",
-    "THREE.TargetCamera": "squarefeet/THREE.TargetCamera"
+    "THREE.TargetCamera": "squarefeet/THREE.TargetCamera",
+    "PreloadJS": "*"
   }
 }

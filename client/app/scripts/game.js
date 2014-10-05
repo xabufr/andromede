@@ -42,13 +42,6 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
 
                 var spacebox = new Spacebox(Core);
 
-                /*var sunLight = new THREE.PointLight(0xffffff, 5.0, 50);
-                sunLight.position.set(10, 10, 0);
-                sunLight.shadowCameraFar = 10;
-                sunLight.shadowCameraNear = 50;
-
-                Core.scene.add(sunLight);*/
-
                 var spaceShip = new SpaceShip(Core);
                 var control = new SpaceShipControl(spaceShip);
                 spaceShip.setWeapon(new Weapon(Core, this.laserPool));

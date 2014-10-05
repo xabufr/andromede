@@ -1,4 +1,4 @@
-define(['three', './../game/input', './assetsLoader', 'Stats'], function(THREE, input, assetsLoader, Stats) {
+define(['three', './../game/input', './assetsLoader', './assertsLoaderReporter', 'Stats'], function(THREE, input, AssetsLoader, AssetsLoaderReporter, Stats) {
     'use strict';
     var scene = new THREE.Scene();
     var sceneFirstPass = new THREE.Scene();
@@ -26,57 +26,63 @@ define(['three', './../game/input', './assetsLoader', 'Stats'], function(THREE, 
     renderer.gammaOutput = true;
 
     var timer = new THREE.Clock();
-
-    return {
-        assetsLoader: new assetsLoader(),
+    var loader = new AssetsLoader();
+    var reporter = new AssetsLoaderReporter(loader);
+    var beforeRenderListeners = [];
+    var frameListeners = [];
+    var corePublic = {
+        assetsLoader: loader,
         start: function(callback) {
-            this.assetsLoader.loadMeshes(function(){
-                var render = function() {
-                    stats.begin();
-                    for(var i=0;i<this.beforeRenderListeners.length;++i) {
-                        this.beforeRenderListeners[i](this);
-                    }
-                    var  delta = timer.getDelta();
-                    renderer.clear();
-                    renderer.render(sceneFirstPass, this.camera.threeCamera);
-                    renderer.render(this.scene, this.camera.threeCamera);
-
-                    var listeners = this.frameListeners;
-
-                    for(var i=0;i< listeners.length; ++i) {
-                        listeners[i](this, delta);
-                    }
-
-                    input.reset();
-                    stats.end();
-                    requestAnimationFrame(render);
-                }.bind(this);
-
-                var resize = function() {
-                    this.camera.threeCamera.aspect = window.innerWidth / window.innerHeight;
-                    this.camera.threeCamera.updateProjectionMatrix();
-                    renderer.setSize(window.innerWidth, window.innerHeight);
-                }.bind(this);
-
-                window.addEventListener('resize', resize, false);
-
-                document.body.appendChild(renderer.domElement);
-                document.body.appendChild(stats.domElement);
-                input.setup(renderer.domElement);
-
-                callback();
-                render();
-            }.bind(this));
+            reporter.onCompleteCallback = makeBootstrapFunction(callback);
+            reporter.start();
         },
         camera: null,
         scene: scene,
         cursor: null,
         sceneFirstPass: sceneFirstPass,
         renderer: renderer,
-        frameListeners: [],
-        beforeRenderListeners: [],
+        frameListeners: frameListeners,
+        beforeRenderListeners: beforeRenderListeners,
         input: input,
         objectsNode: objectsNode,
         effectsNode: effetsNode
+    };
+    function makeBootstrapFunction(callback) {
+        return function () {
+            var render = function() {
+                stats.begin();
+                for(var i=0;i<beforeRenderListeners.length;++i) {
+                    beforeRenderListeners[i](corePublic);
+                }
+                var  delta = timer.getDelta();
+                renderer.clear();
+                renderer.render(sceneFirstPass, corePublic.camera.threeCamera);
+                renderer.render(scene, corePublic.camera.threeCamera);
+
+                for(var i=0;i< frameListeners.length; ++i) {
+                    frameListeners[i](corePublic, delta);
+                }
+
+                input.reset();
+                stats.end();
+                requestAnimationFrame(render);
+            };
+
+            var resize = function() {
+                corePublic.camera.threeCamera.aspect = window.innerWidth / window.innerHeight;
+                corePublic.camera.threeCamera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            };
+
+            window.addEventListener('resize', resize, false);
+
+            document.body.appendChild(renderer.domElement);
+            document.body.appendChild(stats.domElement);
+            input.setup(renderer.domElement);
+
+            callback();
+            render();
+        }
     }
+    return corePublic;
 });

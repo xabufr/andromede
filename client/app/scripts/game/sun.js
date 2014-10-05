@@ -16,11 +16,11 @@ define(['three'], function(THREE) {
         this.lensflare.add(flare3, 70, 0.7, THREE.AdditiveBlending );
         this.lensflare.add(flare3, 120, 0.9, THREE.AdditiveBlending );
         this.lensflare.add(flare3, 70, 1.0, THREE.AdditiveBlending );
-        this.lensflare.position.copy(position);
+
+        this.effectNode.add(this.lensflare);
 
 
         core.effectsNode.add(this.effectNode);
-        core.effectsNode.add(this.lensflare);
     }
 
     return Sun;
