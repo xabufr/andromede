@@ -1,8 +1,8 @@
 define(['three'], function(THREE) {
-    var flare0 = THREE.ImageUtils.loadTexture('assets/textures/sun/lensflare0.png');
-    var flare2 = THREE.ImageUtils.loadTexture('assets/textures/sun/lensflare2.png');
-    var flare3 = THREE.ImageUtils.loadTexture('assets/textures/sun/lensflare3.png');
     function Sun(position, size, color, core) {
+        var flare0 = core.assetsLoader.get('textures', 'lensflare0');
+        var flare2 = core.assetsLoader.get('textures', 'lensflare2');
+        var flare3 = core.assetsLoader.get('textures', 'lensflare3');
         this.effectNode = new THREE.Object3D();
         this.effectNode.position.copy(position);
         this.light = new THREE.PointLight(color, 1.5, 500000);

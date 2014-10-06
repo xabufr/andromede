@@ -23,6 +23,12 @@ define(['three'], function(THREE){
                 lensflare0: 'assets/textures/sun/lensflare0.png',
                 lensflare2: 'assets/textures/sun/lensflare2.png',
                 lensflare3: 'assets/textures/sun/lensflare3.png'
+            },
+            interpreter: function(data) {
+                var texture = new THREE.Texture(undefined, undefined);
+                texture.image = data;
+                texture.needsUpdate = true;
+                return texture;
             }
         }, sounds: {
             list: {
@@ -30,7 +36,6 @@ define(['three'], function(THREE){
             },
             type: 'sound',
             interpreter: function(data, url) {
-                console.log(arguments);
                 return data;
             }
         }

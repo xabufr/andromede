@@ -5,6 +5,7 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
             Core.camera = new Camera(null, 10);
             Core.frameListeners.push(Core.camera.update);
             Core.start(function(){
+                this.laserPool = new Pool(laser, 5, Core);
                 var players = {};
                 var network = new NetworkEngine(this);
                 network.onNewPlayer = function(player) {
@@ -69,6 +70,6 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
                 }.bind(this));
             }.bind(this));
         },
-        laserPool: new Pool(laser, 5, Core)
+        laserPool: null
     }
 });

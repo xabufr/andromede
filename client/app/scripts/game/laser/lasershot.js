@@ -1,9 +1,6 @@
-define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser, SPE, THREE, Core) {
+define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser, SPE, THREE) {
     'use strict';
-    var explosionGroup = new SPE.Group({
-        texture: THREE.ImageUtils.loadTexture('assets/textures/smokeparticle.png'),
-        maxAge: 0.5
-    });
+    var explosionGroup =  null;
     var explosionSettings = {
         type: 'sphere',
         positionSpread: new THREE.Vector3(10, 10, 10),
@@ -21,15 +18,21 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
         alive: 0,
         duration: 0.05
     };
-    explosionGroup.addPool(10, explosionSettings, true);
-    Core.effectsNode.add(explosionGroup.mesh);
-    explosionGroup.mesh.frustumCulled = false;
-    Core.frameListeners.push(function(_, delta) {
-        explosionGroup.tick(delta);
-    });
     return function(core) {
+        if(explosionGroup === null) {
+            explosionGroup = new SPE.Group({
+                texture: core.assetsLoader.get('textures', 'smokeparticle'),
+                maxAge: 0.5
+            });
+            explosionGroup.addPool(10, explosionSettings, true);
+            core.effectsNode.add(explosionGroup.mesh);
+            explosionGroup.mesh.frustumCulled = false;
+            core.frameListeners.push(function(_, delta) {
+                explosionGroup.tick(delta);
+            });
+        }
         var particleGroup = new SPE.Group({
-            texture: THREE.ImageUtils.loadTexture('assets/textures/smokeparticle.png'),
+            texture: core.assetsLoader.get('textures', 'smokeparticle'),
             maxAge: 0.5
         });
         var particleEmitter = new SPE.Emitter({

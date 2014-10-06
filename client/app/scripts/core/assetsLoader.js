@@ -47,15 +47,21 @@ define(['three', 'PreloadJS', './assetsList'], function (THREE, createjs, assets
 
         function handleFileLoad(event) {
             var itemData = event.item.data;
-            var resultStore = this.assets[itemData.name] = this.assets[itemData.name]||{};
+            var resultStore = this.assets[itemData.categoryName] = this.assets[itemData.categoryName]||{};
             var resultProcessed = event.result;
             if(itemData.category.interpreter) {
                 resultProcessed = itemData.category.interpreter(resultProcessed, event.item.src);
             }
-            resultStore[itemData.key] = resultProcessed;
+            if(itemData.array === true) {
+                resultStore[itemData.key] = resultStore[itemData.key] || [];
+                resultStore[itemData.key][itemData.index] = resultProcessed;
+            } else {
+                resultStore[itemData.key] = resultProcessed;
+            }
         }
 
         function handleComplete(event) {
+            console.log(this.assets);
             if(this.completeCallback) {
                 this.completeCallback();
             }
@@ -82,7 +88,7 @@ define(['three', 'PreloadJS', './assetsList'], function (THREE, createjs, assets
                     } else {
                         assetDefinition = {id: categoryName + '.' + assetKey, src: assetSrc, data: {
                             category: category,
-                            name: categoryName,
+                            categoryName: categoryName,
                             key: assetKey
                         }};
                         if(category.type) {
@@ -100,7 +106,8 @@ define(['three', 'PreloadJS', './assetsList'], function (THREE, createjs, assets
                     category: category,
                     categoryName: categoryName,
                     key: assetKey,
-                    array: true
+                    array: true,
+                    index: i
                 }};
                 queue.loadFile(a);
             }

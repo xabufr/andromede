@@ -4,7 +4,7 @@ define(['three', 'SPE'], function(THREE, SPE) {
 
     function SpaceShip(core){
         this.engineParticleGroup = new SPE.Group({
-            texture: THREE.ImageUtils.loadTexture('assets/textures/smokeparticle.png'),
+            texture: core.assetsLoader.get('textures', 'smokeparticle'),
             maxAge: 1
         });
         this.engineParticleGroup.mesh.frustumCulled = false;
