@@ -13,11 +13,25 @@ define(['three'], function(THREE){
             }
         }, textures: {
             list: {
-
+                spacebox: ['assets/textures/spacebox/right1.png',
+                    'assets/textures/spacebox/left2.png',
+                    'assets/textures/spacebox/top3.png',
+                    'assets/textures/spacebox/bottom4.png',
+                    'assets/textures/spacebox/front5.png',
+                    'assets/textures/spacebox/back6.png'],
+                smokeparticle: 'assets/textures/smokeparticle.png',
+                lensflare0: 'assets/textures/sun/lensflare0.png',
+                lensflare2: 'assets/textures/sun/lensflare2.png',
+                lensflare3: 'assets/textures/sun/lensflare3.png'
             }
         }, sounds: {
             list: {
                 shot: 'assets/sound/laser.mp3'
+            },
+            type: 'sound',
+            interpreter: function(data, url) {
+                console.log(arguments);
+                return data;
             }
         }
     }

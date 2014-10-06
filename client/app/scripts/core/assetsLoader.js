@@ -1,15 +1,45 @@
 define(['three', 'PreloadJS', './assetsList'], function (THREE, createjs, assetsList){
     'use strict';
 
+    function SoundPlugin() {
+    }
+    var s = SoundPlugin;
+    s.getPreloadHandlers = function() {
+        return {
+            callback: s.preloadHandler, // Proxy the method to maintain scope
+            types: ["sound"],
+            extensions: ["mp3", "ogg"]
+        }
+    };
+    s.preloadHandler = function(src, type, id, data, basePath, queue) {
+        return {
+            tag: {
+                load: function() {
+                    var request = new XMLHttpRequest();
+                    request.open('GET', src, true);
+                    request.responseType = 'arraybuffer';
+                    var that = this;
+                    request.onload = function() {
+                        that.result = this.response;
+                        that.onload();
+                    };
+                    request.onerror = this.onerror;
+                    request.send();
+                },
+                onload: null,
+                onerror: null,
+                result: null
+            }
+        }
+    };
+
     function AssetsLoader(){
         this.assets = {};
         this.loader = new THREE.JSONLoader();
         this.completeCallback = null;
         this.progressCallback = null;
-        var queue = new createjs.LoadQueue(false);
-        queue.installPlugin(createjs.JAVASCRIPT);
-        queue.installPlugin(createjs.IMAGE);
-        queue.installPlugin(createjs.SOUND);
+        var queue = new createjs.LoadQueue(true);
+        queue.installPlugin(SoundPlugin);
 
         queue.on("fileload", handleFileLoad, this);
         queue.on("complete", handleComplete, this);
@@ -45,19 +75,36 @@ define(['three', 'PreloadJS', './assetsList'], function (THREE, createjs, assets
                 var assets = Object.keys(list);
                 for(var i=0;i<assets.length;++i) {
                     var assetKey = assets[i];
-                    var a = {id: categoryName + '.' + assetKey, src: list[assetKey], data: {
-                        category: category,
-                        name: categoryName,
-                        key: assetKey
-                    }};
-                    if(category.type) {
-                        a.type = category.type;
+                    var assetSrc = list[assetKey];
+                    var assetDefinition;
+                    if(typeof assetSrc === 'object') {
+                        loadArrayAssets(categoryName, category, assetKey, assetSrc);
+                    } else {
+                        assetDefinition = {id: categoryName + '.' + assetKey, src: assetSrc, data: {
+                            category: category,
+                            name: categoryName,
+                            key: assetKey
+                        }};
+                        if(category.type) {
+                            assetDefinition.type = category.type;
+                        }
+                        queue.loadFile(assetDefinition);
                     }
-                    queue.loadFile(a);
                 }
             }
             categories.forEach(loadCategory);
         };
+        function loadArrayAssets(categoryName, category, assetKey, assetsSrc) {
+            for(var i=0;i<assetsSrc.length;++i) {
+                var a = {src: assetsSrc[i], data: {
+                    category: category,
+                    categoryName: categoryName,
+                    key: assetKey,
+                    array: true
+                }};
+                queue.loadFile(a);
+            }
+        }
 
         this.get = function(category, key) {
             return this.assets[category][key];

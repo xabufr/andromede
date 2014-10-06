@@ -6,7 +6,6 @@ define([], function() {
         document.body.appendChild(this.htmlElement);
         loader.progressCallback = this.reportProgress.bind(this);
         loader.completeCallback = this.onComplete.bind(this);
-        loader.startLoad();
         this.onCompleteCallback = onCompleteCallback;
         this.start = loader.startLoad.bind(loader);
     }
