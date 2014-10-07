@@ -77,10 +77,11 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
                 return;
             }
 
+            node.position.setFromMatrixPosition(matrixWorld);
+
             randomRotation.makeRotationAxis(new THREE.Vector3(Math.random(), Math.random(), Math.random()).normalize(), (Math.random() - 0.5) * weapon.imprecision);
             matrixWorld.multiply(randomRotation);
 
-            node.position.set(0,0,0);
             randomRotation.makeRotationAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
             matrixWorld.multiply(randomRotation);
 
@@ -113,7 +114,6 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
                     }
                 }
             }
-            weapon.mesh.localToWorld(node.position);
 
             this.initFromData(p_weapon, p_lifeTime, {
                 position: node.position,
