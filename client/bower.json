@@ -16,7 +16,6 @@
   "dependencies": {
     "three.js": "*",
     "requirejs": "~2.1.15",
-    "howler.js": "~1.1.25",
     "ShaderParticleEngine": "squarefeet/ShaderParticleEngine",
     "stats.js": "*",
     "socket.io-client": "~1.1.0",

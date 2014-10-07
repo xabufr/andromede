@@ -1,4 +1,5 @@
 define(['./chat'], function(Chat) {
+    'use strict';
     function UiMain(Core, network) {
         this.core = Core;
         this.network = network;

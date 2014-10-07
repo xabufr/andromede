@@ -1,4 +1,5 @@
 define(['three'], function(THREE) {
+    'use strict';
     function Sun(position, size, color, core) {
         var flare0 = core.assetsLoader.get('textures', 'lensflare0');
         var flare2 = core.assetsLoader.get('textures', 'lensflare2');

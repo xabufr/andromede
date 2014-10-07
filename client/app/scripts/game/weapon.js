@@ -1,4 +1,4 @@
-define(['three', './laser/lasershot', 'Howler'], function(THREE, LaserShot, Howler) {
+define(['three'], function(THREE) {
     'use strict';
     var count = 1;
     return function Weapon(core, laserPool) {
@@ -11,8 +11,9 @@ define(['three', './laser/lasershot', 'Howler'], function(THREE, LaserShot, Howl
             lastFire = 0;
             var laser = laserPool.get();
             laser.init(this, 2000, 0.5);
-            var sound = new Howler.Howl({urls: ['assets/sound/laser.mp3']});
-            sound.play();
+            core.soundEngine.playSingle('shot', {
+
+            });
             return laser;
         }.bind(this);
         this.update = function(_, delta) {

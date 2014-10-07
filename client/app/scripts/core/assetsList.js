@@ -1,4 +1,4 @@
-define(['three'], function(THREE){
+define(['three', './soundengine'], function(THREE, SoundEngine){
     'use strict';
     var loader = new THREE.JSONLoader();
     return {
@@ -35,8 +35,9 @@ define(['three'], function(THREE){
                 shot: 'assets/sound/laser.mp3'
             },
             type: 'sound',
-            interpreter: function(data, url) {
-                return data;
+            interpreter: function(data) {
+                SoundEngine.register(data);
+                return null;
             }
         }
     }

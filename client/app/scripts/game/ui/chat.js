@@ -1,4 +1,5 @@
 define([], function() {
+    'use strict';
     function Chat(Main, Core) {
         this.main = Main;
         this.core = Core;

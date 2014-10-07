@@ -28,7 +28,8 @@ define(['three', 'PreloadJS', './assetsList'], function (THREE, createjs, assets
                 },
                 onload: null,
                 onerror: null,
-                result: null
+                result: null,
+                data: data
             }
         }
     };

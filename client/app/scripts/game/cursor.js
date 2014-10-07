@@ -1,4 +1,5 @@
 define([], function (){
+    'use strict';
    return function Cursor () {
         this.sprite = document.getElementById("cursor");
         this.move = function(core) {

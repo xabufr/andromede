@@ -1,4 +1,5 @@
 define([], function() {
+    'use strict';
     function AssetsLoaderReporter(loader, onCompleteCallback) {
         this.htmlElement = document.createElement('div');
         this.htmlElement.appendChild(document.createTextNode('Loading assets...'));

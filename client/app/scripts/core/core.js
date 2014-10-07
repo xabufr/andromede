@@ -1,4 +1,4 @@
-define(['three', './../game/input', './assetsLoader', './assertsLoaderReporter', 'Stats'], function(THREE, input, AssetsLoader, AssetsLoaderReporter, Stats) {
+define(['three', './../game/input', './assetsLoader', './assertsLoaderReporter', 'Stats', './soundengine'], function(THREE, input, AssetsLoader, AssetsLoaderReporter, Stats, SoundEngine) {
     'use strict';
     var scene = new THREE.Scene(),
         sceneFirstPass = new THREE.Scene(),
@@ -30,7 +30,8 @@ define(['three', './../game/input', './assetsLoader', './assertsLoaderReporter',
         beforeRenderListeners: beforeRenderListeners,
         input: input,
         objectsNode: objectsNode,
-        effectsNode: effetsNode
+        effectsNode: effetsNode,
+        soundEngine: new SoundEngine()
     };
 
     return corePublic;
