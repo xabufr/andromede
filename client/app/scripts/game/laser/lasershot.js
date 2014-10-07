@@ -31,29 +31,7 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
                 explosionGroup.tick(delta);
             });
         }
-        var particleGroup = new SPE.Group({
-            texture: core.assetsLoader.get('textures', 'smokeparticle'),
-            maxAge: 0.5
-        });
-        var particleEmitter = new SPE.Emitter({
-            type: 'cube',
-            position: new THREE.Vector3(0,0,0),
-            acceleration: new THREE.Vector3(-4, 0, 0),
-            velocity: new THREE.Vector3(3.5, 0, 0),
-            velocitySpread: new THREE.Vector3(2,2,2),
-            particlesPerSecond: 750,
-            sizeStart: 0.15,
-            sizeStartSpread: 0.05,
-            sizeEnd: 1,
-            opacityStart: 1,
-            angleStartSpread: Math.PI,
-            opacityEnd: 0,
-            colorStart: new THREE.Color('white'),
-            colorEnd: new THREE.Color('blue'),
-            emitterDuration: 0.05,
-            alive: 0
-        });
-        particleGroup.addEmitter(particleEmitter);
+
         var weapon, maxLength, lifeTime, currentLifeTime;
         var node = new THREE.Object3D();
         var percute = false;
@@ -63,20 +41,15 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
         this.laser.mesh.visible = false;
         core.effectsNode.add(node);
         node.add(this.laser.mesh);
-        node.add(particleGroup.mesh);
 
         var update = function(_, delta) {
             var laserMesh = this.laser.mesh;
-            particleGroup.tick(delta);
             if(laserMesh.visible) {
                 currentLifeTime += delta;
                 var scale = (lifeTime - currentLifeTime) / lifeTime;
                 laserMesh.scale. y = laserMesh.scale.z = scale;
-                particleEmitter.alive = scale;
                 laserMesh.visible = currentLifeTime < lifeTime;
                 this.laser.material.color = this.initialColor.clone().multiplyScalar(scale);
-            } else {
-                particleEmitter.alive = 0.0;
             }
         }.bind(this);
 
@@ -87,6 +60,8 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
         this.init = function(p_weapon, p_length, p_lifeTime) {
             weapon = p_weapon;
             maxLength = p_length;
+            lifeTime = p_lifeTime;
+            currentLifeTime = 0;
             percute = false;
 
             var matrixWorld = null;
@@ -105,10 +80,10 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
             randomRotation.makeRotationAxis(new THREE.Vector3(Math.random(), Math.random(), Math.random()).normalize(), (Math.random() - 0.5) * weapon.imprecision);
             matrixWorld.multiply(randomRotation);
 
+            node.position.set(0,0,0);
             randomRotation.makeRotationAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
             matrixWorld.multiply(randomRotation);
 
-            node.position.set(0,0,0);
             node.rotation.setFromRotationMatrix(matrixWorld);
 
             var raycaster = new THREE.Raycaster();
@@ -121,7 +96,8 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
             if(intersects.length > 0) {
                 for(var i=0; i < intersects.length; ++i) {
                     var currentMesh = intersects[i].object;
-                    if(currentMesh === weapon.mesh) {
+                    console.log(currentMesh);
+                    if(currentMesh === weapon.mesh || currentMesh === weapon.mesh.parent) {
                         continue;
                     } else {
                         var position = intersects[i].point;
@@ -150,7 +126,6 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
         };
 
         this.initFromData = function(p_weapon, p_lifeTime, data) {
-            particleEmitter.alive = 1.0;
             currentLifeTime = 0;
             weapon = p_weapon;
             lifeTime = p_lifeTime;
