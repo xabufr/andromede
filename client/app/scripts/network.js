@@ -10,11 +10,20 @@ define(['SocketIO'], function(io) {
         this.id = null;
         this.socket.on('set id', function(id) {
             this.id = id;
+            if(this.onConnected) {
+                this.onConnected(id);
+            }
         }.bind(this));
 
         this.socket.emit('new player', {
             name: parameters.playerName || 'Default player'
         });
+
+        this.socket.on('die', function(playerId) {
+            if(this.onShipDie) {
+                this.onShipDie(players[playerId]);
+            }
+        }.bind(this));
 
         this.socket.on('player list', function(list) {
             for(var i=0; i<list.length; ++i) {
@@ -76,9 +85,17 @@ define(['SocketIO'], function(io) {
             }
         }.bind(this));
 
+        this.socket.on('shipDamage', function(data) {
+            if(this.onShipDamage) {
+                this.onShipDamage( players[data.emitter], players[data.target], data.damage);
+            }
+        }.bind(this));
+
         this.findPlayerByMessage = function(message) {
             return players[message.player];
         };
+
+        this.onConnected = null;
     };
     NetworkEngine.prototype.spaceship = null;
     NetworkEngine.prototype.chatMessageListeners = [];
@@ -87,6 +104,8 @@ define(['SocketIO'], function(io) {
     NetworkEngine.prototype.onPlayerSpawn = null;
     NetworkEngine.prototype.onPosition = null;
     NetworkEngine.prototype.onShot = null;
+    NetworkEngine.prototype.onShipDamage = null;
+    NetworkEngine.prototype.onShipDie = null;
 
     NetworkEngine.prototype.sendPosition = function() {
         if(this.spaceship != null) {
@@ -110,6 +129,17 @@ define(['SocketIO'], function(io) {
         this.sendPosition();
         this.socket.emit('die', {});
         this.spaceship = null;
+    };
+
+    NetworkEngine.prototype.sufferDamage = function(playerId, damage) {
+        this.socket.emit('shipDamage', {
+            player: playerId,
+            damage: damage
+        });
+    };
+
+    NetworkEngine.prototype.sendDie = function() {
+        this.socket.emit('die', {});
     };
 
     NetworkEngine.prototype.update = function(Core, delta) {

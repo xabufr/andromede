@@ -62,7 +62,6 @@ define(['three', 'PreloadJS', './assetsList'], function (THREE, createjs, assets
         }
 
         function handleComplete(event) {
-            console.log(this.assets);
             if(this.completeCallback) {
                 this.completeCallback();
             }

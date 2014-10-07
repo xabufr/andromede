@@ -130,7 +130,8 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
                             scale = distance;
                             percute = {
                                 mesh: currentMesh,
-                                position: position
+                                position: position,
+                                weapon: weapon
                             };
                         }
                         break;
@@ -143,8 +144,9 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
                 position: node.position,
                 scale: scale,
                 rotation: node.quaternion,
-                hit: (percute === false ? false : percute.position)
+                hit: (percute === false ? false : percute)
             });
+            return percute;
         };
 
         this.initFromData = function(p_weapon, p_lifeTime, data) {
@@ -159,7 +161,7 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
             node.quaternion.copy(data.rotation);
             this.laser.mesh.scale.set(data.scale, 1, 1);
             if(data.hit !== false) {
-                explosionGroup.triggerPoolEmitter(1, data.hit);
+                explosionGroup.triggerPoolEmitter(1, data.hit.position);
             } else {
             }
         };
@@ -169,6 +171,15 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
         };
 
         this.serialize = function() {
+            var hitData = false;
+            if(percute !== false) {
+                hitData = {
+                    position: percute.position
+                };
+                if(percute.mesh.userData.type === 'spaceship') {
+                    hitData.player = percute.mesh.userData.object.player.id;
+                }
+            }
             return {
                 scale: this.laser.mesh.scale.x,
                 position: node.position,
@@ -178,8 +189,11 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
                     z: node.quaternion.z,
                     w: node.quaternion.w
                 },
-                hit: (percute === false ? false : percute.position)
+                hit: hitData
             };
+        };
+        this.getHit = function() {
+            return percute;
         };
     }
 });

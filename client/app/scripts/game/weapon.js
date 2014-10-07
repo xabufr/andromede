@@ -7,6 +7,7 @@ define(['three'], function(THREE) {
             new THREE.MeshFaceMaterial(core.assetsLoader.get('models', 'mainWeapon').materials));
         this.mesh.name = 'mainWeapon'+count++;
         this.imprecision = Math.PI / 64;
+        this.damage = 25 | 0;
         this.tirer = function() {
             lastFire = 0;
             var laser = laserPool.get();
