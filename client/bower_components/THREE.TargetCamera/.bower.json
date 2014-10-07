@@ -1,0 +1,14 @@
+{
+  "name": "THREE.TargetCamera",
+  "homepage": "https://github.com/squarefeet/THREE.TargetCamera",
+  "_release": "efd3be61ff",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "efd3be61fff021c14915c1abf3b54c84236c47bf"
+  },
+  "_source": "git://github.com/squarefeet/THREE.TargetCamera.git",
+  "_target": "*",
+  "_originalSource": "squarefeet/THREE.TargetCamera",
+  "_direct": true
+}

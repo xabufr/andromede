@@ -97,9 +97,18 @@ define([], function() {
         },
         keyboard: {
             keys: {},
-            listeners: []
+            listeners: [],
+            notifyOnly: false
         },
-        setup: function(element) {
+        notifyKeyboardEvent: function (event, isDown) {
+            if(this.keyboard.notifyOnly === false) {
+                for (var i = 0; i < this.keyboard.listeners.length; ++i) {
+                    this.keyboard.listeners[i](event, isDown);
+                }
+            } else {
+                this.keyboard.notifyOnly(event, isDown);
+            }
+        }, setup: function(element) {
             var havePointerLock = 'pointerLockElement' in document ||
                 'mozPointerLockElement' in document ||
                 'webkitPointerLockElement' in document;
@@ -122,15 +131,11 @@ define([], function() {
             }.bind(this);
             var keyDown = function(event) {
                 this.keyboard.keys[event.keyCode] = true;
-                for(var i=0;i<this.keyboard.listeners.length;++i) {
-                    this.keyboard.listeners[i](event, true);
-                }
+                this.notifyKeyboardEvent(event, true);
             }.bind(this);
             var keyUp = function(event) {
                 this.keyboard.keys[event.keyCode] = false;
-                for(var i=0;i<this.keyboard.listeners.length;++i) {
-                    this.keyboard.listeners[i](event, false);
-                }
+                this.notifyKeyboardEvent(event, false);
             }.bind(this);
             var lockChangeCallback = function() {
                 if (document.pointerLockElement === element ||
@@ -161,6 +166,9 @@ define([], function() {
                 this.mouse.abs.incrementWheel(e.deltaY);
                 this.mouse.rel.z = e.deltaY;
             }.bind(this);
+            var contextMenu = function(e) {
+                e.preventDefault();
+            }.bind(this);
             if(havePointerLock) {
                 element.requestPointerLock = element.requestPointerLock ||
                     element.mozRequestPointerLock ||
@@ -175,6 +183,7 @@ define([], function() {
                 element.addEventListener('click', lock, false);
                 element.addEventListener('mousedown', mouseDown, false);
                 element.addEventListener('mouseup', mouseUp, false);
+                element.addEventListener('contextmenu', contextMenu, false);
                 window.addEventListener('keydown', keyDown, false);
                 window.addEventListener('keyup', keyUp, false);
                 window.addWheelListener(element, mouseWheel, false);

@@ -1,3 +1,4 @@
-define(['game', 'SocketIO'], function(game, IO){
+define(['game'], function(game){
+    'use strict';
     game.start();
 });

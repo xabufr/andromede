@@ -1,4 +1,5 @@
 define(['three'], function(THREE) {
+    'use strict';
     var canvas = generateLaserBodyCanvas();
     var texture = new THREE.Texture(canvas);
     var geometry = new THREE.PlaneGeometry(1, 0.1);

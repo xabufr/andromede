@@ -1,4 +1,4 @@
-define(['three', './laser/lasershot', 'Howler'], function(THREE, LaserShot, Howler) {
+define(['three'], function(THREE) {
     'use strict';
     var count = 1;
     var tmpMatrix = new THREE.Matrix4();
@@ -6,7 +6,7 @@ define(['three', './laser/lasershot', 'Howler'], function(THREE, LaserShot, Howl
     return function Weapon(core, laserPool) {
         var lastFire = 0;
         this.particleGroup = new SPE.Group({
-            texture: THREE.ImageUtils.loadTexture('assets/textures/smokeparticle.png'),
+            texture: core.assetsLoader.get('textures', 'smokeparticle'),
             maxAge: 0.5
         });
         this.particleEmitter = new SPE.Emitter({
@@ -31,22 +31,21 @@ define(['three', './laser/lasershot', 'Howler'], function(THREE, LaserShot, Howl
         var currentLifeTime = lifeTime;
 
         this.particleGroup.addEmitter(this.particleEmitter);
-        this.mesh = new THREE.SkinnedMesh(core.assetsLoader.get('mainWeapon').geometry,
-            new THREE.MeshFaceMaterial(core.assetsLoader.get('mainWeapon').materials));
+        this.mesh = new THREE.SkinnedMesh(core.assetsLoader.get('models', 'mainWeapon').geometry,
+            new THREE.MeshFaceMaterial(core.assetsLoader.get('models', 'mainWeapon').materials));
         this.mesh.name = 'mainWeapon'+count++;
 
         core.effectsNode.add(this.particleGroup.mesh);
-        this.imprecision = Math.PI / 16;
+        this.imprecision = Math.PI / 64;
         this.tirer = function() {
             lastFire = 0;
             currentLifeTime = 0;
             var laser = laserPool.get();
             laser.init(this, 2000, 0.5);
-            var sound = new Howler.Howl({urls: ['assets/sound/laser.mp3']});
-            sound.play();
-            if(this.network !== null) {
-                this.network.sendShot(laser.serialize());
-            }
+            core.soundEngine.playSingle('shot', {
+
+            });
+            return laser;
         }.bind(this);
         this.update = function(_, delta) {
             this.particleGroup.tick(delta);
@@ -70,12 +69,17 @@ define(['three', './laser/lasershot', 'Howler'], function(THREE, LaserShot, Howl
                 }
             }
 
+            var shot = false;
             if(this.isFiring && lastFire >= 0.1) {
-                this.tirer();
+                shot = this.tirer();
             }
             lastFire += delta;
+            return shot;
+        };
+        this.shotFromData = function(shotData) {
+            var laser = laserPool.get();
+            laser.initFromData(this, 0.5, shotData);
         };
         this.isFiring = false;
-        this.network = null;
     };
 });
