@@ -96,7 +96,6 @@ define(['./basiclaser', 'SPE', 'three', '../../core/core'], function(BasicLaser,
             if(intersects.length > 0) {
                 for(var i=0; i < intersects.length; ++i) {
                     var currentMesh = intersects[i].object;
-                    console.log(currentMesh);
                     if(currentMesh === weapon.mesh || currentMesh === weapon.mesh.parent) {
                         continue;
                     } else {
