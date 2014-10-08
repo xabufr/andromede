@@ -10,8 +10,8 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
         var control = null;
         function localshipDie() {
             network.die();
-            localSpaceship.reset();
-            network.spawn(localSpaceship);
+            localSpaceship.die();
+            spawnLocalSpaceship();
         }
         var frameListener = function (Core, delta) {
             TWEEN.update(delta * 0.001);
@@ -49,22 +49,28 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
                 }
             }
         };
-        var startGame = function() {
-            var sun = new Sun({x: 100, y:200, z: 500}, 700, new THREE.Color('yellow'), Core);
-            var ui = new UI(Core, network);
-
-            var spacebox = new Spacebox(Core);
+        function spawnLocalSpaceship () {
             localSpaceship = new SpaceShip(Core);
             localSpaceship.onDie = localshipDie;
             players[localId].ship = localSpaceship;
 
             control = new SpaceShipControl(localSpaceship);
-            localSpaceship.setWeapon(new Weapon(Core, this.laserPool));
-            localSpaceship.setWeapon(new Weapon(Core, this.laserPool));
+            var weapon = new Weapon(Core, Game.laserPool);
+            weapon.mesh.name = 'mainWeapon1';
+            localSpaceship.setWeapon(weapon);
+            weapon = new Weapon(Core, Game.laserPool);
+            weapon.mesh.name = 'mainWeapon2';
+            localSpaceship.setWeapon(weapon);
             localSpaceship.network = network;
             network.spawn(localSpaceship);
-
             Core.camera.setTarget(localSpaceship.mesh);
+        }
+        var startGame = function() {
+            var sun = new Sun({x: 100, y:200, z: 500}, 700, new THREE.Color('yellow'), Core);
+            var ui = new UI(Core, network);
+            var spacebox = new Spacebox(Core);
+
+            spawnLocalSpaceship();
 
             Core.cursor = new Cursor(Core.scene);
 
