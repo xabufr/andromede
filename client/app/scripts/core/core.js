@@ -1,4 +1,5 @@
-define(['three', './../game/input', './assetsLoader', './assertsLoaderReporter', 'Stats', './soundengine'], function(THREE, input, AssetsLoader, AssetsLoaderReporter, Stats, SoundEngine) {
+define(['three', './../game/input', './assetsLoader', './assertsLoaderReporter', 'Stats', './soundengine', './render/effectscomposer', './render/renderpass'],
+    function(THREE, input, AssetsLoader, AssetsLoaderReporter, Stats, SoundEngine, EffectsComposer, RenderPass) {
     'use strict';
     var scene = new THREE.Scene(),
         sceneFirstPass = new THREE.Scene(),
@@ -13,8 +14,13 @@ define(['three', './../game/input', './assetsLoader', './assertsLoaderReporter',
         loader = new AssetsLoader(),
         reporter = new AssetsLoaderReporter(loader),
         beforeRenderListeners = [],
-        frameListeners = [];
+        frameListeners = [],
+        composer = new EffectsComposer(renderer);
 
+        var renderFirstPass = new RenderPass(sceneFirstPass);
+        composer.addPass(renderFirstPass, 0);
+        var renderPass = new RenderPass(scene);
+        composer.addPass(renderPass, 1);
     var corePublic = {
         assetsLoader: loader,
         start: function(callback) {
@@ -31,7 +37,8 @@ define(['three', './../game/input', './assetsLoader', './assertsLoaderReporter',
         input: input,
         objectsNode: objectsNode,
         effectsNode: effetsNode,
-        soundEngine: new SoundEngine()
+        soundEngine: new SoundEngine(),
+        composer: composer
     };
 
     return corePublic;
@@ -71,9 +78,10 @@ define(['three', './../game/input', './assetsLoader', './assertsLoaderReporter',
             beforeRenderListeners[i](corePublic);
         }
         var  delta = timer.getDelta();
-        renderer.clear();
-        renderer.render(sceneFirstPass, corePublic.camera.threeCamera);
-        renderer.render(scene, corePublic.camera.threeCamera);
+        renderer.clear(new THREE.Color(0x000000));
+        renderPass.camera = corePublic.camera.threeCamera;
+        renderFirstPass.camera = corePublic.camera.threeCamera;
+        composer.render(delta);
 
         for(var i=0;i< frameListeners.length; ++i) {
             frameListeners[i](corePublic, delta);

@@ -35,6 +35,7 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
             object: this
         };
         this.weapons = [];
+        this.onDamage = null;
 
         core.objectsNode.add(this.mesh);
 
@@ -209,6 +210,9 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
 
     SpaceShip.prototype.sufferDamages = function (damage) {
         this.life -= damage;
+        if(this.onDamage) {
+            this.onDamage(this, damage);
+        }
         if(!this.isAlive() && this.onDie) {
             this.onDie(this);
         }

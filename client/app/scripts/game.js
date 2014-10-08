@@ -1,6 +1,6 @@
 define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', 'game/spaceShip', 'game/weapon', 'game/laser/lasershot',
-        'core/pool', './game/ui/uiMain', './game/spaceShipControl', 'TWEEN', 'game/sun'],
-    function(Core, NetworkEngine, Camera, Cursor, Spacebox, SpaceShip, Weapon, laser, Pool, UI, SpaceShipControl, TWEEN, Sun) {
+        'core/pool', './game/ui/uiMain', './game/spaceShipControl', 'TWEEN', 'game/sun', 'game/posteffects/glitch'],
+    function(Core, NetworkEngine, Camera, Cursor, Spacebox, SpaceShip, Weapon, laser, Pool, UI, SpaceShipControl, TWEEN, Sun, GlitchPass) {
         'use strict';
         var Game = {};
         var players = {};
@@ -8,10 +8,14 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
         var localId = null;
         var localSpaceship = null;
         var control = null;
+        var glitchPass = new GlitchPass();
         function localshipDie() {
             network.die();
             localSpaceship.die();
             spawnLocalSpaceship();
+        }
+        function onLocalshipDamage(ship, damageAmount) {
+            glitchPass.glitchDuring((damageAmount * 1.5) | 0);
         }
         var frameListener = function (Core, delta) {
             TWEEN.update(delta * 0.001);
@@ -62,6 +66,7 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
             weapon.mesh.name = 'mainWeapon2';
             localSpaceship.setWeapon(weapon);
             localSpaceship.network = network;
+            localSpaceship.onDamage = onLocalshipDamage;
             network.spawn(localSpaceship);
             Core.camera.setTarget(localSpaceship.mesh);
         }
@@ -73,7 +78,7 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
             spawnLocalSpaceship();
 
             Core.cursor = new Cursor(Core.scene);
-
+            Core.composer.addPass(glitchPass);
             Core.frameListeners.push(frameListener);
         }.bind(Game);
         var initNetwork = function() {
