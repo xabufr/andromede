@@ -90,8 +90,14 @@
         });
         socket.on('die', function(data) {
             userData.spaceship = null;
-            data.player = socket.id;
-            socket.broadcast.emit('die', data);
+            socket.broadcast.emit('die', socket.id);
+        });
+        socket.on('shipDamage', function(data) {
+            clients[data.player].socket.emit('shipDamage', {
+                emitter: socket.id,
+                damage: data.damage,
+                target: data.player
+            });
         });
     });
 })();

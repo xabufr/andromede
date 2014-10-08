@@ -43,6 +43,7 @@ define(['three'], function(THREE) {
 
         core.effectsNode.add(this.particleGroup.mesh);
         this.imprecision = Math.PI / 64;
+        this.damage = 25 | 0;
         this.tirer = function() {
             lastFire = 0;
             currentLifeTime = 0;

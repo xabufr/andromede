@@ -1,4 +1,4 @@
-define(['three', 'SPE'], function(THREE, SPE) {
+define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
     'use strict';
     var count = 1;
 
@@ -37,7 +37,12 @@ define(['three', 'SPE'], function(THREE, SPE) {
             this.bones[bone.name] = bone;
         }
 
+        this.mesh.userData = {
+            type: 'spaceship',
+            object: this
+        };
         this.weapons = [];
+        this.onDamage = null;
 
         core.objectsNode.add(this.mesh);
 
@@ -54,18 +59,52 @@ define(['three', 'SPE'], function(THREE, SPE) {
         };
 
         this.weaponUpdate = function(core,delta) {
+            var hits = [];
             for (var i=0; i < this.weapons.length; ++i) {
                 var weapon = this.weapons[i];
                 weapon.isFiring = this.isReallyShotting;
                 var shot = weapon.update(core, delta);
-                if(shot !== false && this.network) {
-                    this.network.sendShot({
-                        weapon: i,
-                        shot: shot.serialize()
-                    });
+                if (shot !== false) {
+                    if(shot.getHit()) {
+                        hits.push(shot.getHit());
+                    }
+                    if (this.network) {
+                        this.network.sendShot({
+                            weapon: i,
+                            shot: shot.serialize()
+                        });
+                    }
                 }
             }
+            return hits;
         };
+
+        this.modelProperties = {
+            engine: {
+                max: 10,
+                acceleration: 2.5
+            },
+            maniability: {
+                max: {
+                    x: Math.PI / 2,
+                    y: Math.PI / 2
+                },
+                accelertion: {
+                    x: Math.PI * 0.3,
+                    y: Math.PI * 0.3
+                }
+            },
+            maxLife: 100 | 0
+        };
+
+        this.reset();
+        this.network = null;
+        this.onDie = null;
+        this.player = null;
+        this.reset();
+    }
+
+    SpaceShip.prototype.reset = function() {
         this.physic = {
             engine: {
                 power: 0,
@@ -90,26 +129,11 @@ define(['three', 'SPE'], function(THREE, SPE) {
                 this.rotation.y.velocity = other.rotation.y.velocity;
             }
         };
-
-        this.modelProperties = {
-            engine: {
-                max: 10,
-                acceleration: 2.5
-            },
-            maniability: {
-                max: {
-                    x: Math.PI / 2,
-                    y: Math.PI / 2
-                },
-                accelertion: {
-                    x: Math.PI * 0.3,
-                    y: Math.PI * 0.3
-                }
-            }
-        };
         this.isReallyShotting = false;
-        this.network = null;
-    }
+        this.life = this.modelProperties.maxLife;
+        this.mesh.position.set(0,0,0);
+        this.mesh.rotation.set(0,0,0);
+    };
 
     SpaceShip.prototype.incrementEnginePower = function(value) {
         this.physic.engine.power += value;
@@ -125,7 +149,8 @@ define(['three', 'SPE'], function(THREE, SPE) {
                 z: this.mesh.quaternion.z,
                 w: this.mesh.quaternion.w
             },
-            physic: this.physic
+            physic: this.physic,
+            life: this.life
         };
         return state;
     };
@@ -134,6 +159,7 @@ define(['three', 'SPE'], function(THREE, SPE) {
         this.mesh.position.copy(state.position);
         this.mesh.quaternion.copy(state.rotation);
         this.physic.copy(state.physic);
+        this.life = state.life;
     };
 
     function computeNewVelocity(max, acceleration, physic, delta) {
@@ -161,7 +187,7 @@ define(['three', 'SPE'], function(THREE, SPE) {
         var deplacement = delta * this.physic.engine.velocity;
         this.mesh.translateZ(deplacement);
 
-        this.weaponUpdate(core, delta);
+        return this.weaponUpdate(core, delta);
     };
 
     SpaceShip.prototype.remove = function () {
@@ -182,6 +208,46 @@ define(['three', 'SPE'], function(THREE, SPE) {
         if(weapon) {
             weapon.shotFromData(shotData.shot);
         }
+    };
+
+    SpaceShip.prototype.sufferDamages = function (damage) {
+        this.life -= damage;
+        if(this.onDamage) {
+            this.onDamage(this, damage);
+        }
+        if(!this.isAlive() && this.onDie) {
+            this.onDie(this);
+        }
+    };
+
+    SpaceShip.prototype.isAlive = function() {
+        return this.life > 0;
+    };
+
+    SpaceShip.prototype.die = function() {
+        this.mesh.parent.remove(this.mesh);
+        this.engineParticleGroup.mesh.parent.remove(this.engineParticleGroup.mesh);
+        new Explosion(this.core, [
+            {
+                position: this.mesh.position,
+                power: 40
+            },
+            {
+                position: this.mesh.position,
+                power: 50,
+                delay: 0.4
+            },
+            {
+                position: this.mesh.position,
+                power: 50,
+                delay: 0.6
+            },
+            {
+                position: this.mesh.position,
+                power: 100,
+                delay: 0.9
+            }
+        ]);
     };
 
     return SpaceShip;
