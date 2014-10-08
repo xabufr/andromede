@@ -47,7 +47,7 @@ define(['three'], function(THREE) {
             });
             return laser;
         }.bind(this);
-        this.update = function(_, delta) {
+        this.update = function(core, delta) {
             this.particleGroup.tick(delta);
 
             currentLifeTime += delta;
@@ -67,6 +67,20 @@ define(['three'], function(THREE) {
                     this.particleGroup.mesh.position.setFromMatrixPosition(bone.matrixWorld);
                     this.particleGroup.mesh.rotation.setFromRotationMatrix(tmpMatrix);
                 }
+            }
+
+            var projector = new THREE.Projector();
+            var vector = new THREE.Vector3((core.input.mouse.abs.x / window.innerWidth) * 2 - 1,
+                -2 * (core.input.mouse.abs.y / window.innerHeight) + 1, 0);
+
+            var raycaster = projector.pickingRay(vector.clone(), core.camera.threeCamera);
+            var intersects = raycaster.intersectObjects(core.objectsNode.children, true);
+
+            if (intersects.length > 0) {
+                this.mesh.lookAt(intersects[0].point);
+            }
+            else {
+                this.mesh.lookAt(this.mesh.parent.worldToLocal(raycaster.ray.at(2000)));
             }
 
             var shot = false;
