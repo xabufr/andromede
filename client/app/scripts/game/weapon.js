@@ -76,11 +76,12 @@ define(['three'], function(THREE) {
             var raycaster = projector.pickingRay(vector.clone(), core.camera.threeCamera);
             var intersects = raycaster.intersectObjects(core.objectsNode.children, true);
 
-            if (intersects.length > 0) {
-                this.mesh.lookAt(intersects[0].point);
+            if (intersects.length > 0 && intersects[0].object !== this.ship.mesh) {
+                this.mesh.lookAt(this.ship.mesh.worldToLocal(intersects[0].point));
             }
             else {
-                this.mesh.lookAt(this.mesh.parent.worldToLocal(raycaster.ray.at(2000)));
+                console.log('tutu');
+                this.mesh.lookAt(this.ship.mesh.worldToLocal(raycaster.ray.at(2000)));
             }
 
             var shot = false;
