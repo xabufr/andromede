@@ -3,7 +3,7 @@ define(['three'], function(THREE) {
     var count = 1;
     var tmpMatrix = new THREE.Matrix4();
     var tmpMatrixRotation = new THREE.Matrix4();
-    return function Weapon(core, laserPool) {
+    function Weapon(core, laserPool) {
         var lastFire = 0;
         this.particleGroup = new SPE.Group({
             texture: core.assetsLoader.get('textures', 'smokeparticle'),
@@ -73,28 +73,6 @@ define(['three'], function(THREE) {
                 this.particleGroup.mesh.rotation.setFromRotationMatrix(tmpMatrix);
             }
 
-            var projector = new THREE.Projector();
-            var vector = new THREE.Vector3((core.input.mouse.abs.x / window.innerWidth) * 2 - 1,
-                -2 * (core.input.mouse.abs.y / window.innerHeight) + 1, 0);
-
-            var raycaster = projector.pickingRay(vector.clone(), core.camera.threeCamera);
-            var intersects = raycaster.intersectObjects(core.objectsNode.children, true);
-
-            if (intersects.length > 0 && intersects[0].object !== this.ship.mesh) {
-                console.log(intersects[0].object);
-                if (intersects[0].object.name.indexOf("spaceShip") !== -1
-                    && intersects[0].object.name !== this.ship.mesh.name ) {
-                    core.cursor.changeColor();
-                }
-                this.mesh.lookAt(this.ship.mesh.worldToLocal(intersects[0].point));
-            }
-            else {
-                if (core.cursor.color === 'red') {
-                    core.cursor.changeColor();
-                }
-                this.mesh.lookAt(this.ship.mesh.worldToLocal(raycaster.ray.at(2000)));
-            }
-
             var shot = false;
             if(this.isFiring && lastFire >= 0.1) {
                 shot = this.tirer();
@@ -108,4 +86,8 @@ define(['three'], function(THREE) {
         };
         this.isFiring = false;
     };
+    Weapon.prototype.lookAt = function(worldPosition) {
+        this.mesh.lookAt(this.ship.mesh.worldToLocal(worldPosition));
+    };
+    return Weapon;
 });

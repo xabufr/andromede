@@ -224,6 +224,12 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
         return this.life > 0;
     };
 
+    SpaceShip.prototype.weaponLookAt = function(worldPosition) {
+        for(var i=0;i<this.weapons.length; ++i) {
+            this.weapons[i].lookAt(worldPosition.clone());
+        }
+    };
+
     SpaceShip.prototype.die = function() {
         this.mesh.parent.remove(this.mesh);
         this.engineParticleGroup.mesh.parent.remove(this.engineParticleGroup.mesh);

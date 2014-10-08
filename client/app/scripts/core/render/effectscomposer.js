@@ -6,7 +6,7 @@ define(['three', './shaderpass', './copyshader'], function(THREE, ShaderPass, Co
         if (renderTarget === undefined) {
             var width = window.innerWidth || 1;
             var height = window.innerHeight || 1;
-            var parameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat, stencilBuffer: false };
+            var parameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat, stencilBuffer: false, alpha: true, antialias: true};
             renderTarget = new THREE.WebGLRenderTarget(width, height, parameters);
         }
         this.renderTarget1 = renderTarget;
