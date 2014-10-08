@@ -69,9 +69,7 @@ define(['SPE'], function(SPE) {
             ++count;
             if(! data.exploded) {
                 var delay = data.parameter.delay || 0;
-                console.log('not');
                 if(delay <= this.lifeTime) {
-                    console.log('explode !');
                     data.group.triggerPoolEmitter(1);
                     data.exploded = true;
                 }
