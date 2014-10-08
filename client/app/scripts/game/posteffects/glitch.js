@@ -7,7 +7,6 @@ define(['three', './glitchshader'], function(THREE, GlitchShader) {
         if(dt_size==undefined) dt_size=64;
 
         this.uniforms[ "tDisp"].value=this.generateHeightmap(dt_size);
-        this.uniforms[ 'byp' ].value=0;
 
         this.material = new THREE.ShaderMaterial({
             uniforms: this.uniforms,

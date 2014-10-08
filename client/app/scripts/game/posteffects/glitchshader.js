@@ -5,7 +5,6 @@ define([], function() {
 
             "tDiffuse": { type: "t", value: null },//diffuse texture
             "tDisp": { type: "t", value: null },//displacement texture for digital glitch squares
-            "byp": { type: "i", value: 0 },//apply the glitch ?
             "amount": { type: "f", value: 0.08 },
             "angle": { type: "f", value: 0.02 },
             "seed": { type: "f", value: 0.02 },
@@ -48,7 +47,6 @@ define([], function() {
             "}",
 
             "void main() {",
-            "if(byp<1) {",
             "vec2 p = vUv;",
             "float xs = floor(gl_FragCoord.x / 0.5);",
             "float ys = floor(gl_FragCoord.y / 0.5);",
@@ -79,12 +77,8 @@ define([], function() {
             "vec4 cb = texture2D(tDiffuse, p - offset);",
             "gl_FragColor = vec4(cr.r, cga.g, cb.b, cga.a);",
             //add noise
-            "vec4 snow = 200.*amount*vec4(rand(vec2(xs * seed,ys * seed*50.))*0.2);",
+            "vec4 snow = 100.*amount*vec4(rand(vec2(xs * seed,ys * seed*50.))*0.2);",
             "gl_FragColor = gl_FragColor+ snow;",
-            "}",
-            "else {",
-            "gl_FragColor=texture2D (tDiffuse, vUv);",
-            "}",
             "}"
 
         ].join("\n")
