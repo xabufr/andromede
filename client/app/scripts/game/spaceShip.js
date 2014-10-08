@@ -30,21 +30,25 @@ define(['three', 'SPE'], function(THREE, SPE) {
         this.mesh.receiveShadow = true;
         this.mesh.material.skinning = true;
         this.mesh.name = 'spaceShip'+count++;
+        this.bones = {};
+
+        for (var i=0; i < this.mesh.skeleton.bones.length; i++) {
+            var bone = this.mesh.skeleton.bones[i];
+            this.bones[bone.name] = bone;
+        }
+
         this.weapons = [];
 
         core.objectsNode.add(this.mesh);
 
         this.setWeapon = function(weapon) {
             weapon.ship = this;
-            var bones = this.mesh.skeleton.bones;
-            for (var i=0; i < bones.length; ++i) {
-                if (bones[i].name == weapon.mesh.name) {
-                    var bone = bones[i];
-                    weapon.mesh.position.setFromMatrixPosition(bone.matrixWorld);
-                    this.mesh.add(weapon.mesh);
-                    this.weapons.push(weapon);
-                    return;
-                }
+            var bone = this.bones[weapon.mesh.name];
+            if (bone != undefined) {
+                weapon.mesh.position.setFromMatrixPosition(bone.matrixWorld);
+                this.mesh.add(weapon.mesh);
+                this.weapons.push(weapon);
+                return;
             }
             throw 'Cannot attach weapon';
         };
@@ -143,12 +147,10 @@ define(['three', 'SPE'], function(THREE, SPE) {
 
     SpaceShip.prototype.update = function(core, delta) {
         this.engineParticleGroup.tick(delta);
-        for (var i=0; i < this.mesh.skeleton.bones.length; ++i){
-            var bone = this.mesh.skeleton.bones[i];
-            if (bone.name === 'engine1') {
-                this.engineParticleEmitter.position.setFromMatrixPosition(bone.matrixWorld);
-                this.engineParticleEmitter.alive = this.physic.engine.power;
-            }
+        var bone = this.bones['engine1'];
+        if (bone != undefined) {
+            this.engineParticleEmitter.position.setFromMatrixPosition(bone.matrixWorld);
+            this.engineParticleEmitter.alive = this.physic.engine.power;
         }
         this.physic.rotation.x.velocity = computeNewVelocity(this.modelProperties.maniability.max.x, this.modelProperties.maniability.accelertion.x, this.physic.rotation.x, delta);
         this.physic.rotation.y.velocity = computeNewVelocity(this.modelProperties.maniability.max.y, this.modelProperties.maniability.accelertion.y, this.physic.rotation.y, delta);

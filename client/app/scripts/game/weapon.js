@@ -34,6 +34,12 @@ define(['three'], function(THREE) {
         this.mesh = new THREE.SkinnedMesh(core.assetsLoader.get('models', 'mainWeapon').geometry,
             new THREE.MeshFaceMaterial(core.assetsLoader.get('models', 'mainWeapon').materials));
         this.mesh.name = 'mainWeapon'+count++;
+        this.bones = {};
+
+        for (var i=0; i < this.mesh.skeleton.bones.length; i++) {
+            var bone = this.mesh.skeleton.bones[i];
+            this.bones[bone.name] = bone;
+        }
 
         core.effectsNode.add(this.particleGroup.mesh);
         this.imprecision = Math.PI / 64;
@@ -57,16 +63,13 @@ define(['three'], function(THREE) {
 
             this.particleEmitter.alive = (lifeTime - currentLifeTime) / lifeTime;
 
-
-            for (var i=0; i < this.mesh.skeleton.bones.length; i++) {
-                var bone = this.mesh.skeleton.bones[i];
-                if (bone.name === 'fire') {
-                    tmpMatrix.copy(bone.matrixWorld);
-                    tmpMatrixRotation.makeRotationY(Math.PI * 0.5);
-                    tmpMatrix.multiply(tmpMatrixRotation);
-                    this.particleGroup.mesh.position.setFromMatrixPosition(bone.matrixWorld);
-                    this.particleGroup.mesh.rotation.setFromRotationMatrix(tmpMatrix);
-                }
+            var bone = this.bones.fire;
+            if (bone != undefined) {
+                tmpMatrix.copy(bone.matrixWorld);
+                tmpMatrixRotation.makeRotationY(Math.PI * 0.5);
+                tmpMatrix.multiply(tmpMatrixRotation);
+                this.particleGroup.mesh.position.setFromMatrixPosition(bone.matrixWorld);
+                this.particleGroup.mesh.rotation.setFromRotationMatrix(tmpMatrix);
             }
 
             var projector = new THREE.Projector();
@@ -77,10 +80,17 @@ define(['three'], function(THREE) {
             var intersects = raycaster.intersectObjects(core.objectsNode.children, true);
 
             if (intersects.length > 0 && intersects[0].object !== this.ship.mesh) {
+                console.log(intersects[0].object);
+                if (intersects[0].object.name.indexOf("spaceShip") !== -1
+                    && intersects[0].object.name !== this.ship.mesh.name ) {
+                    core.cursor.changeColor();
+                }
                 this.mesh.lookAt(this.ship.mesh.worldToLocal(intersects[0].point));
             }
             else {
-                console.log('tutu');
+                if (core.cursor.color === 'red') {
+                    core.cursor.changeColor();
+                }
                 this.mesh.lookAt(this.ship.mesh.worldToLocal(raycaster.ray.at(2000)));
             }
 
