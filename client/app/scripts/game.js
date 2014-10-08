@@ -48,7 +48,7 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
         }
     };
     var startGame = function() {
-        var sun = new Sun({x: 0, y:0, z: 500}, 700, new THREE.Color('yellow'), Core);
+        var sun = new Sun({x: 100, y:200, z: 500}, 700, new THREE.Color('yellow'), Core);
         var ui = new UI(Core, network);
 
         var spacebox = new Spacebox(Core);

@@ -1,4 +1,4 @@
-define(['three', 'SPE'], function(THREE, SPE) {
+define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
     'use strict';
     var count = 1;
 
@@ -221,6 +221,27 @@ define(['three', 'SPE'], function(THREE, SPE) {
     SpaceShip.prototype.die = function() {
         this.mesh.parent.remove(this.mesh);
         this.engineParticleGroup.mesh.parent.remove(this.engineParticleGroup.mesh);
+        new Explosion(this.core, [
+            {
+                position: this.mesh.position,
+                power: 40
+            },
+            {
+                position: this.mesh.position,
+                power: 50,
+                delay: 0.4
+            },
+            {
+                position: this.mesh.position,
+                power: 50,
+                delay: 0.6
+            },
+            {
+                position: this.mesh.position,
+                power: 100,
+                delay: 0.9
+            }
+        ]);
     };
 
     return SpaceShip;
