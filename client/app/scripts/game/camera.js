@@ -2,7 +2,7 @@ define(['three', 'three.targetcamera'], function(THREE, THREETargetCamera){
     'use strict';
     return function Camera(target, distance) {
         this.distance = distance;
-        this.threeCamera = new THREETargetCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.threeCamera = new THREETargetCamera(45, window.innerWidth / window.innerHeight, 0.1, 50000);
         this.target = target;
 
         this.update = function(core, delta) {

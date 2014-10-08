@@ -1,7 +1,7 @@
 define(['three'], function(THREE) {
     'use strict';
     return function(core) {
-        var geometry = new THREE.BoxGeometry(500, 500, 500);
+        var geometry = new THREE.BoxGeometry(5000, 5000, 5000);
         var materialArray = [];
         for(var i=0;i<6;++i) {
             materialArray.push(new THREE.MeshBasicMaterial({
