@@ -15,7 +15,7 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
             spawnLocalSpaceship();
         }
         function onLocalshipDamage(ship, damageAmount) {
-            glitchPass.glitchDuring((damageAmount * 1.5) | 0);
+            glitchPass.glitchDuring((damageAmount * 0.75) | 0);
         }
         var frameListener = function (Core, delta) {
             TWEEN.update(delta * 0.001);

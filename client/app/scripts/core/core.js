@@ -96,5 +96,6 @@ define(['three', './../game/input', './assetsLoader', './assertsLoaderReporter',
         corePublic.camera.threeCamera.aspect = window.innerWidth / window.innerHeight;
         corePublic.camera.threeCamera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+        composer.setSize(window.innerWidth, window.innerHeight);
     }
 });
