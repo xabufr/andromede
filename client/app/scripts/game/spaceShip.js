@@ -141,6 +141,10 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
     };
 
     SpaceShip.prototype.serialize = function() {
+        var weapons = [];
+        for(var i=0; i<this.weapons.length; ++i) {
+            weapons.push(this.weapons[i].serialize());
+        }
         var state = {
             position: this.mesh.position,
             rotation: {
@@ -150,7 +154,8 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
                 w: this.mesh.quaternion.w
             },
             physic: this.physic,
-            life: this.life
+            life: this.life,
+            weapons: weapons
         };
         return state;
     };
@@ -160,6 +165,9 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
         this.mesh.quaternion.copy(state.rotation);
         this.physic.copy(state.physic);
         this.life = state.life;
+        for(var i=0; i<this.weapons.length;++i) {
+            this.weapons[i].deserialize(state.weapons[i]);
+        }
     };
 
     function computeNewVelocity(max, acceleration, physic, delta) {

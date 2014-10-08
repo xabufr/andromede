@@ -89,5 +89,19 @@ define(['three'], function(THREE) {
     Weapon.prototype.lookAt = function(worldPosition) {
         this.mesh.lookAt(this.ship.mesh.worldToLocal(worldPosition));
     };
+
+    Weapon.prototype.serialize = function() {
+        return {
+            rotation: {
+                x: this.mesh.quaternion.x,
+                y: this.mesh.quaternion.y,
+                z: this.mesh.quaternion.z,
+                w: this.mesh.quaternion.w
+            }
+        }
+    };
+    Weapon.prototype.deserialize = function(data) {
+        this.mesh.quaternion.copy(data.rotation);
+    };
     return Weapon;
 });
