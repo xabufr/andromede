@@ -18,9 +18,8 @@ define(['core/core', 'network', 'game/camera', 'game/ui/cursor', 'game/spacebox'
         function onLocalshipDamage(ship, damageAmount) {
             glitchPass.glitchDuring((damageAmount * 0.75) | 0);
         }
-        var frameListener = function (Core, delta) {
-            TWEEN.update(delta * 0.001);
-            control.update(Core, delta);
+
+        function sendLocalPlayerHits(Core, delta) {
             var hits = localSpaceship.update(Core, delta);
             if (hits.length > 0) {
                 var ships = {};
@@ -41,6 +40,12 @@ define(['core/core', 'network', 'game/camera', 'game/ui/cursor', 'game/spacebox'
                     network.sufferDamage(playersId[i], ships[playersId[i]]);
                 }
             }
+        }
+
+        var frameListener = function (Core, delta) {
+            TWEEN.update(delta * 0.001);
+            control.update(Core, delta);
+            sendLocalPlayerHits(Core, delta);
             ui.update(Core, delta);
             network.update(Core, delta);
             var keys = Object.keys(players);
