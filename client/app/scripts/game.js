@@ -1,4 +1,4 @@
-define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', 'game/spaceShip', 'game/weapon', 'game/laser/lasershot',
+define(['core/core', 'network', 'game/camera', 'game/ui/cursor', 'game/spacebox', 'game/spaceShip', 'game/weapon', 'game/laser/lasershot',
         'core/pool', './game/ui/uiMain', './game/spaceShipControl', 'TWEEN', 'game/sun', 'game/posteffects/glitch'],
     function(Core, NetworkEngine, Camera, Cursor, Spacebox, SpaceShip, Weapon, laser, Pool, UI, SpaceShipControl, TWEEN, Sun, GlitchPass) {
         'use strict';
@@ -9,6 +9,7 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
         var localSpaceship = null;
         var control = null;
         var glitchPass = new GlitchPass();
+        var ui = null;
         function localshipDie() {
             network.die();
             localSpaceship.die();
@@ -40,8 +41,8 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
                     network.sufferDamage(playersId[i], ships[playersId[i]]);
                 }
             }
+            ui.update(Core, delta);
             network.update(Core, delta);
-            Core.cursor.move(Core, delta);
             var keys = Object.keys(players);
             for (var i = 0; i < keys.length; ++i) {
                 var key = keys[i];
@@ -58,7 +59,7 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
             localSpaceship.onDie = localshipDie;
             players[localId].ship = localSpaceship;
 
-            control = new SpaceShipControl(localSpaceship);
+            control = new SpaceShipControl(localSpaceship, Game);
             var weapon = new Weapon(Core, Game.laserPool);
             weapon.mesh.name = 'mainWeapon1';
             localSpaceship.setWeapon(weapon);
@@ -72,12 +73,12 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
         }
         var startGame = function() {
             var sun = new Sun({x: 100, y:200, z: 500}, 700, new THREE.Color('yellow'), Core);
-            var ui = new UI(Core, network);
+            ui = new UI(Core, network);
+            Game.ui = ui;
             var spacebox = new Spacebox(Core);
 
             spawnLocalSpaceship();
 
-            Core.cursor = new Cursor(Core.scene);
             Core.composer.addPass(glitchPass);
             Core.frameListeners.push(frameListener);
         }.bind(Game);

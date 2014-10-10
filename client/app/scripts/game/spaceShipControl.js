@@ -3,8 +3,9 @@ define(['three'], function(THREE){
     var projector = new THREE.Projector(),
         vector = new THREE.Vector3();
 
-    function SpaceShipControl(ship){
+    function SpaceShipControl(ship, game){
         this.ship = ship;
+        this.game = game;
     }
 
     SpaceShipControl.prototype.update = function(core, delta) {
@@ -22,12 +23,12 @@ define(['three'], function(THREE){
         if (intersects.length > 0 && intersects[0].object !== this.ship.mesh) {
             if (intersects[0].object.name.indexOf("spaceShip") !== -1
                 && intersects[0].object.name !== this.ship.mesh.name ) {
-                core.cursor.changeColor('red');
+                this.game.ui.cursor.changeColor('red');
             }
             this.ship.weaponLookAt(intersects[0].point);
         }
         else {
-            core.cursor.changeColor('green');
+            this.game.ui.cursor.changeColor('green');
             this.ship.weaponLookAt(raycaster.ray.at(2000));
         }
 
