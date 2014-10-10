@@ -6,15 +6,16 @@
     var http = require('http').Server(app);
     var io = require('socket.io')(http);
     var now = require("performance-now");
+    var staticCompressed = require('./serve-static-compressed');
 
     var port = process.env.PORT || 8080;
     app.use(compress());
-    app.use('/', express.static(__dirname + '/../client/'));
     app.get('/', function(req, res) {
         res.redirect('/app/index.html');
     });
+    app.use('/', staticCompressed(__dirname + '/../client/'));
     http.listen(port, function () {
-        console.log('Start server on port 8080');
+        console.log('Start server on port ' + port);
     });
 
     var clients = {};
