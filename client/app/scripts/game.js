@@ -1,7 +1,7 @@
 define(['core/core', 'network', 'game/camera', 'game/ui/cursor', 'game/spacebox', 'game/spaceShip', 'game/weapon', 'game/laser/lasershot',
-        'core/pool', './game/ui/uiMain', './game/spaceShipControl', 'TWEEN', 'game/sun', 'game/posteffects/glitch'],
-    function(Core, NetworkEngine, Camera, Cursor, Spacebox, SpaceShip, Weapon, laser, Pool, UI, SpaceShipControl, TWEEN, Sun, GlitchPass) {
-        'use strict';
+        'core/pool', './game/ui/uiMain', './game/spaceShipControl', 'TWEEN', 'game/sun', 'game/posteffects/glitch', './game/ui/spaceshipinfos'],
+    function(Core, NetworkEngine, Camera, Cursor, Spacebox, SpaceShip, Weapon, laser, Pool, UI, SpaceShipControl, TWEEN, Sun, GlitchPass, SpaceshipInfos) {
+        "use strict";
         var Game = {};
         var players = {};
         var network = new NetworkEngine(this);
@@ -106,6 +106,7 @@ define(['core/core', 'network', 'game/camera', 'game/ui/cursor', 'game/spacebox'
                 weapon.mesh.name = 'mainWeapon2';
                 spaceship.setWeapon(weapon);
                 spaceship.player = players[player.id];
+                ui.createScreenTracker(spaceship.mesh, new SpaceshipInfos(spaceship));
             }.bind(this);
 
             network.onPosition = function(player, positionData) {
