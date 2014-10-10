@@ -264,5 +264,9 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
         ]);
     };
 
+    SpaceShip.prototype.lifePercent = function() {
+        return this.life / this.modelProperties.maxLife;
+    };
+
     return SpaceShip;
 });

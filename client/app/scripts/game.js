@@ -46,7 +46,7 @@ define(['core/core', 'network', 'game/camera', 'game/ui/cursor', 'game/spacebox'
             TWEEN.update(delta * 0.001);
             control.update(Core, delta);
             sendLocalPlayerHits(Core, delta);
-            ui.update(Core, delta);
+            ui.update(Core, delta, localSpaceship);
             network.update(Core, delta);
             var keys = Object.keys(players);
             for (var i = 0; i < keys.length; ++i) {

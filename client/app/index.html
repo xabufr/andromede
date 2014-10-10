@@ -11,7 +11,6 @@
             z-index: 1000;
             width: 32px;
             height: 32px;
-            position: absolute;
             background-image: url('assets/textures/cursorGreen.png');
         }
         #chat-input {
@@ -46,18 +45,23 @@
         #chat-messages .message {
             background-color: rgba(200, 200, 200, 0.5);
         }
+        .uiElement {
+            display: none;
+            position: absolute;
+        }
     </style>
     <title>Andromède Game</title>
 </head>
 <body>
 <script src="../bower_components/requirejs/require.js"></script>
 <script src="scripts/config.js"></script>
-<div id="cursor" style="display: none"></div>
+<div id="cursor" class="uiElement"></div>
 <div id="ui">
     <div id="chat-messages-container">
         <div id="chat-messages"></div>
     </div>
     <input id="chat-input" value="" type="text"/>
+    <progress id="life" class="uiElement" value="0"/>
 </div>
 </body>
 </html>
