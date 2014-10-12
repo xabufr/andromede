@@ -117,10 +117,13 @@ define(['core/core', 'network', 'game/camera', 'game/ui/cursor', 'game/spacebox'
                 }
             };
             network.onByePlayer = function(player) {
-                var spaceship = players[player.id].ship;
+                var playerData = players[player.id];
+                var spaceship = playerData.ship;
                 if(spaceship) {
                     spaceship.remove();
+                    ui.deleteScreenTracker(playerData.shipInfos);
                 }
+                delete players[player.id];
             };
             network.onShot = function(player, shotData) {
                 var spaceship = players[player.id].ship;

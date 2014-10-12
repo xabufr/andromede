@@ -200,7 +200,7 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
 
     SpaceShip.prototype.remove = function () {
         this.core.objectsNode.remove(this.mesh);
-        this.core.effectsNode.remove(this.engineParticleGroup);
+        this.core.effectsNode.remove(this.engineParticleGroup.mesh);
     };
 
     SpaceShip.prototype.turnUpDown = function(percent) {
@@ -239,8 +239,7 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
     };
 
     SpaceShip.prototype.die = function() {
-        this.mesh.parent.remove(this.mesh);
-        this.engineParticleGroup.mesh.parent.remove(this.engineParticleGroup.mesh);
+        this.remove();
         new Explosion(this.core, [
             {
                 position: this.mesh.position,
