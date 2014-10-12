@@ -55,6 +55,8 @@
         });
         var pingInterval = setInterval(function () {
             socket.emit('ping', now());
+            var buffer = new Float64Array([1, 2, Math.PI]);
+            socket.emit('test', buffer.buffer);
         }, 250);
         socket.on('pong', function (date) {
             userData.ping = now() - date;
@@ -66,9 +68,11 @@
             delete clients[socket.id];
         });
         socket.on('position', function(data) {
-            data.player = socket.id;
-            userData.spaceship.position = data;
-            socket.broadcast.emit('position', data);
+            var message = {
+                player: socket.id,
+                data: data
+            };
+            socket.broadcast.emit('position', message);
         });
         socket.on('shot', function(shot) {
             shot.player = socket.id;

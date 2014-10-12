@@ -44,7 +44,7 @@ define(['SocketIO'], function(io) {
             if(this.onPosition) {
                 var player = this.findPlayerByMessage(position);
                 if(player) {
-                    this.onPosition(player, position);
+                    this.onPosition(player, position.data);
                 }
             }
         }.bind(this));
@@ -94,7 +94,6 @@ define(['SocketIO'], function(io) {
         this.findPlayerByMessage = function(message) {
             return players[message.player];
         };
-
         this.onConnected = null;
     };
     NetworkEngine.prototype.spaceship = null;

@@ -90,18 +90,15 @@ define(['three'], function(THREE) {
         this.mesh.lookAt(this.ship.mesh.worldToLocal(worldPosition));
     };
 
-    Weapon.prototype.serialize = function() {
-        return {
-            rotation: {
-                x: this.mesh.quaternion.x,
-                y: this.mesh.quaternion.y,
-                z: this.mesh.quaternion.z,
-                w: this.mesh.quaternion.w
-            }
-        }
+    Weapon.prototype.serialize = function(buffer) {
+        buffer.push(this.mesh.quaternion.x);
+        buffer.push(this.mesh.quaternion.y);
+        buffer.push(this.mesh.quaternion.z);
+        buffer.push(this.mesh.quaternion.w);
     };
-    Weapon.prototype.deserialize = function(data) {
-        this.mesh.quaternion.copy(data.rotation);
+    Weapon.prototype.deserialize = function(offset, data) {
+        this.mesh.quaternion.set(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
+        return offset + 4;
     };
     return Weapon;
 });
