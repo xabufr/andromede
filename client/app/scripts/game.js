@@ -98,15 +98,17 @@ define(['core/core', 'network', 'game/camera', 'game/ui/cursor', 'game/spacebox'
                 };
             };
             network.onPlayerSpawn = function(player, shipModel) {
-                var spaceship = players[player.id].ship = new SpaceShip(Core);
+                var playerData = players[player.id];
+                var spaceship = playerData.ship = new SpaceShip(Core);
                 var weapon = new Weapon(Core, this.laserPool);
                 weapon.mesh.name = 'mainWeapon1';
                 spaceship.setWeapon(weapon);
                 weapon = new Weapon(Core, this.laserPool);
                 weapon.mesh.name = 'mainWeapon2';
                 spaceship.setWeapon(weapon);
-                spaceship.player = players[player.id];
-                ui.createScreenTracker(spaceship.mesh, new SpaceshipInfos(spaceship));
+                spaceship.player = playerData;
+                var spaceshipInfos = new SpaceshipInfos(spaceship);
+                playerData.shipInfos = ui.createScreenTracker(spaceship.mesh, spaceshipInfos);
             }.bind(this);
 
             network.onPosition = function(player, positionData) {
@@ -140,7 +142,9 @@ define(['core/core', 'network', 'game/camera', 'game/ui/cursor', 'game/spacebox'
                 startGame();
             };
             network.onShipDie = function(player) {
-                players[player.id].ship.die();
+                var playerData = players[player.id];
+                playerData.ship.die();
+                ui.deleteScreenTracker(playerData.shipInfos);
                 delete players[player.id].ship;
             };
         }.bind(Game);

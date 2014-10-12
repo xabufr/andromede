@@ -25,8 +25,14 @@ define(['./chat', './cursor', './progressBar', './objectscreentracker'], functio
         }
     };
     UiMain.prototype.createScreenTracker = function(object3d, element) {
-        var id = Math.random();
-        this.trackers[id] = new ObjectScreenTracker(id, object3d, element);
+        var id = String(Math.random());
+        var objectScreenTracker = new ObjectScreenTracker(id, object3d, element);
+        this.trackers[id] = objectScreenTracker;
+        return objectScreenTracker;
+    };
+    UiMain.prototype.deleteScreenTracker = function(tracker) {
+        this.trackers[tracker.id].remove();
+        delete this.trackers[tracker.id];
     };
     return UiMain;
 });

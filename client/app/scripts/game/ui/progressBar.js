@@ -2,7 +2,7 @@ define([], function() {
     "use strict";
     function ProgressBar() {
         this.element = document.getElementById('life');
-        this.element.style.display = 'block';
+        this.element.style.display = 'inline-block';
         this.element.style.bottom = '0px';
         this.element.style.right = '0px';
         this.value = this.element.value = 1;
