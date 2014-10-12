@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -14,5 +14,8 @@
     "mime": "^1.2.11",
     "performance-now": "^0.2.0",
     "socket.io": "^1.1.0"
+  },
+  "engines": {
+    "node": "0.10.x"
   }
 }
