@@ -55,9 +55,7 @@
         });
         var pingInterval = setInterval(function () {
             socket.emit('ping', now());
-            var buffer = new Float64Array([1, 2, Math.PI]);
-            socket.emit('test', buffer.buffer);
-        }, 250);
+        }, 2500);
         socket.on('pong', function (date) {
             userData.ping = now() - date;
         });

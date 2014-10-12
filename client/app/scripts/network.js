@@ -95,6 +95,8 @@ define(['SocketIO'], function(io) {
             return players[message.player];
         };
         this.onConnected = null;
+        this.positionFrequency = 30;
+        this.lastPositionSend = 1000;
     };
     NetworkEngine.prototype.spaceship = null;
     NetworkEngine.prototype.chatMessageListeners = [];
@@ -142,7 +144,11 @@ define(['SocketIO'], function(io) {
     };
 
     NetworkEngine.prototype.update = function(Core, delta) {
-        this.sendPosition();
+        this.lastPositionSend += delta;
+        if(this.lastPositionSend > 1/this.positionFrequency) {
+            this.lastPositionSend = 0;
+            this.sendPosition();
+        }
     };
 
     return NetworkEngine;
