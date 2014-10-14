@@ -7,7 +7,7 @@ define(['three'], function(THREE) {
         var lastFire = 0;
         this.particleGroup = new SPE.Group({
             texture: core.assetsLoader.get('textures', 'smokeparticle'),
-            maxAge: 0.5
+            maxAge: 0.1
         });
         this.particleEmitter = new SPE.Emitter({
             type: 'cube',

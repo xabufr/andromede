@@ -1,6 +1,6 @@
 define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', 'game/spaceShip', 'game/weapon', 'game/laser/lasershot',
-        'core/pool', './game/ui/uiMain', './game/spaceShipControl', 'TWEEN', 'game/sun', 'game/posteffects/glitch'],
-    function(Core, NetworkEngine, Camera, Cursor, Spacebox, SpaceShip, Weapon, laser, Pool, UI, SpaceShipControl, TWEEN, Sun, GlitchPass) {
+        'core/pool', './game/ui/uiMain', './game/spaceShipControl', 'TWEEN', 'game/sun', 'game/posteffects/glitch', 'game/spaceParticlesEffect'],
+    function(Core, NetworkEngine, Camera, Cursor, Spacebox, SpaceShip, Weapon, laser, Pool, UI, SpaceShipControl, TWEEN, Sun, GlitchPass, SpaceParticlesEffect) {
         'use strict';
         var Game = {};
         var players = {};

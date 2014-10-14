@@ -19,7 +19,9 @@ define(['three'], function(THREE){
         var raycaster = projector.pickingRay(vector.clone(), core.camera.threeCamera);
         var intersects = raycaster.intersectObjects(core.objectsNode.children, true);
 
-        if (intersects.length > 0 && intersects[0].object !== this.ship.mesh) {
+        if (intersects.length > 0 && (intersects[0].object !== this.ship.mesh
+            && this.ship.mesh.children.indexOf(intersects[0].object) === -1)) {
+            console.log(intersects[0].object);
             if (intersects[0].object.name.indexOf("spaceShip") !== -1
                 && intersects[0].object.name !== this.ship.mesh.name ) {
                 core.cursor.changeColor('red');
