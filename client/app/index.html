@@ -49,7 +49,7 @@
             display: none;
             position: absolute;
         }
-        #life {
+        #life, #energy {
             height: 10px;
         }
         progress.life {
@@ -73,6 +73,27 @@
             background: linear-gradient(to left,  red 0%,#9E0000 100%);
             border-radius: 9px;
         }
+        progress.energy {
+            background-color: #f3f3f3;
+            padding: 0;
+            border-radius: 9px;
+            border: 0;
+        }
+        progress.energy::-webkit-progress-bar {
+            background-color: #f3f3f3;
+            border-radius: 9px;
+        }
+        progress.energy::-webkit-progress-value {
+            background: #ffa700;
+            background: linear-gradient(to left, #ffa700 0%, #ff7200 100%);
+            border-radius: 9px;
+            transition : width 0.2s ease;
+        }
+        progress.energy::-moz-progress-bar {
+            background: #ffa700;
+            background: linear-gradient(to left, #ffa700 0%, #ff7200 100%);
+            border-radius: 9px;
+        }
         progress.objectLife {
             width: 50px;
             height: 5px;
@@ -89,7 +110,8 @@
         <div id="chat-messages"></div>
     </div>
     <input id="chat-input" value="" type="text"/>
-    <progress id="life" class="uiElement life" value="0"/>
+    <progress id="life" class="uiElement life" value="0"></progress>
+    <progress id="energy" class="uiElement energy" value="0"></progress>
 </div>
 </body>
 </html>

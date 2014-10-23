@@ -5,7 +5,9 @@ define(['./chat', './cursor', './progressBar', './objectscreentracker'], functio
         this.network = network;
         this.chatElement = new Chat(this, Core);
         this.cursor = new Cursor();
-        this.lifeBar = new ProgressBar();
+        this.lifeBar = new ProgressBar('life');
+        this.energyBar = new ProgressBar('energy');
+        this.energyBar.setPosition({x: 0, y: 11});
         this.trackers = {};
     }
     UiMain.prototype.lockKeyboard = function(listener) {
@@ -18,6 +20,7 @@ define(['./chat', './cursor', './progressBar', './objectscreentracker'], functio
         this.cursor.move(Core);
         if(localShip) {
             this.lifeBar.setValue(localShip.lifePercent());
+            this.energyBar.setValue(localShip.energyPercent());
         }
         var keys = Object.keys(this.trackers);
         for(var i=0;i<keys.length;++i) {
