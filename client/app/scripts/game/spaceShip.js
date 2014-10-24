@@ -63,9 +63,10 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
             var hits = [];
             for (var i=0; i < this.weapons.length; ++i) {
                 var weapon = this.weapons[i];
-                weapon.isFiring = this.isReallyShotting;
+                weapon.isFiring = (this.isReallyShotting && this.energy > weapon.requiredEnergy);
                 var shot = weapon.update(core, delta);
                 if (shot !== false) {
+                    this.energy -= weapon.requiredEnergy;
                     if(shot.getHit()) {
                         hits.push(shot.getHit());
                     }
@@ -95,7 +96,11 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
                     y: Math.PI * 0.3
                 }
             },
-            maxLife: 100 | 0
+            maxLife: 100 | 0,
+            energy: {
+                max: 100,
+                generation: 25
+            }
         };
 
         this.network = null;
@@ -149,6 +154,7 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
         };
         this.isReallyShotting = false;
         this.life = this.modelProperties.maxLife;
+        this.energy = this.modelProperties.energy.max;
         this.mesh.position.set(0,0,0);
         this.mesh.rotation.set(0,0,0);
     };
@@ -215,6 +221,7 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
         this.physic.engine.velocity = computeNewVelocity(this.modelProperties.engine.max, this.modelProperties.engine.acceleration, this.physic.engine, delta);
         var deplacement = delta * this.physic.engine.velocity;
         this.mesh.translateZ(deplacement);
+        this.energy = Math.min(this.modelProperties.energy.max, this.energy + delta * this.modelProperties.energy.generation);
 
         return this.weaponUpdate(core, delta);
     };
@@ -286,6 +293,10 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
 
     SpaceShip.prototype.lifePercent = function() {
         return this.life / this.modelProperties.maxLife;
+    };
+
+    SpaceShip.prototype.energyPercent = function() {
+        return this.energy / this.modelProperties.energy.max;
     };
 
     return SpaceShip;

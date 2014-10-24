@@ -85,6 +85,7 @@ define(['three'], function(THREE) {
             laser.initFromData(this, 0.5, shotData);
         };
         this.isFiring = false;
+        this.requiredEnergy = 10;
     };
     Weapon.prototype.lookAt = function(worldPosition) {
         this.mesh.lookAt(this.ship.mesh.worldToLocal(worldPosition));
