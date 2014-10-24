@@ -31,6 +31,7 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
         this.mesh.material.skinning = true;
         this.mesh.name = 'spaceShip'+count++;
         this.bones = {};
+        this.lockedTarget = null;
 
         for (var i=0; i < this.mesh.skeleton.bones.length; i++) {
             var bone = this.mesh.skeleton.bones[i];
@@ -97,10 +98,10 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
             maxLife: 100 | 0
         };
 
-        this.reset();
         this.network = null;
         this.onDie = null;
         this.player = null;
+        this.target = null;
         this.reset();
     }
 
@@ -127,6 +128,23 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
                 this.rotation.x.velocity = other.rotation.x.velocity;
                 this.rotation.y.power = other.rotation.y.power;
                 this.rotation.y.velocity = other.rotation.y.velocity;
+            },
+            serialize: function(buffer) {
+                buffer.push(this.engine.power);
+                buffer.push(this.engine.velocity);
+                buffer.push(this.rotation.x.power);
+                buffer.push(this.rotation.x.velocity);
+                buffer.push(this.rotation.y.power);
+                buffer.push(this.rotation.y.velocity);
+            },
+            deserialize: function(offset, buffer) {
+                this.engine.power = buffer[offset + 0];
+                this.engine.velocity = buffer[offset + 1];
+                this.rotation.x.power = buffer[offset + 2];
+                this.rotation.x.velocity = buffer[offset + 3];
+                this.rotation.y.power = buffer[offset + 4];
+                this.rotation.y.velocity = buffer[offset + 5];
+                return offset + 6;
             }
         };
         this.isReallyShotting = false;
@@ -141,32 +159,35 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
     };
 
     SpaceShip.prototype.serialize = function() {
-        var weapons = [];
-        for(var i=0; i<this.weapons.length; ++i) {
-            weapons.push(this.weapons[i].serialize());
+        var data = [];
+        data[0] = this.mesh.position.x;
+        data[1] = this.mesh.position.y;
+        data[2] = this.mesh.position.z;
+        data[3] = this.mesh.quaternion.x;
+        data[4] = this.mesh.quaternion.y;
+        data[5] = this.mesh.quaternion.z;
+        data[6] = this.mesh.quaternion.w;
+        data[7] = this.life;
+        this.physic.serialize(data);
+        for(var i=0; i<this.weapons.length;++i) {
+            this.weapons[i].serialize(data);
         }
-        var state = {
-            position: this.mesh.position,
-            rotation: {
-                x: this.mesh.quaternion.x,
-                y: this.mesh.quaternion.y,
-                z: this.mesh.quaternion.z,
-                w: this.mesh.quaternion.w
-            },
-            physic: this.physic,
-            life: this.life,
-            weapons: weapons
-        };
-        return state;
+        return new Float32Array(data).buffer;
     };
 
     SpaceShip.prototype.deserialize = function(state) {
-        this.mesh.position.copy(state.position);
-        this.mesh.quaternion.copy(state.rotation);
-        this.physic.copy(state.physic);
-        this.life = state.life;
+        var data = new Float32Array(state);
+        this.mesh.position.x = data[0];
+        this.mesh.position.y = data[1];
+        this.mesh.position.z = data[2];
+        this.mesh.quaternion.x = data[3];
+        this.mesh.quaternion.y = data[4];
+        this.mesh.quaternion.z = data[5];
+        this.mesh.quaternion.w = data[6];
+        this.life = data[7];
+        var offset = this.physic.deserialize(8, data);
         for(var i=0; i<this.weapons.length;++i) {
-            this.weapons[i].deserialize(state.weapons[i]);
+            offset = this.weapons[i].deserialize(offset, data);
         }
     };
 
@@ -200,7 +221,7 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
 
     SpaceShip.prototype.remove = function () {
         this.core.objectsNode.remove(this.mesh);
-        this.core.effectsNode.remove(this.engineParticleGroup);
+        this.core.effectsNode.remove(this.engineParticleGroup.mesh);
     };
 
     SpaceShip.prototype.turnUpDown = function(percent) {
@@ -239,8 +260,7 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
     };
 
     SpaceShip.prototype.die = function() {
-        this.mesh.parent.remove(this.mesh);
-        this.engineParticleGroup.mesh.parent.remove(this.engineParticleGroup.mesh);
+        this.remove();
         new Explosion(this.core, [
             {
                 position: this.mesh.position,
@@ -262,6 +282,10 @@ define(['three', 'SPE', './explosion'], function(THREE, SPE, Explosion) {
                 delay: 0.9
             }
         ]);
+    };
+
+    SpaceShip.prototype.lifePercent = function() {
+        return this.life / this.modelProperties.maxLife;
     };
 
     return SpaceShip;

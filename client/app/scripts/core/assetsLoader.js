@@ -39,7 +39,7 @@ define(['three', 'PreloadJS', './assetsList'], function (THREE, createjs, assets
         this.loader = new THREE.JSONLoader();
         this.completeCallback = null;
         this.progressCallback = null;
-        var queue = new createjs.LoadQueue(true);
+        var queue = new createjs.LoadQueue(false);
         queue.installPlugin(SoundPlugin);
 
         queue.on("fileload", handleFileLoad, this);
@@ -74,8 +74,10 @@ define(['three', 'PreloadJS', './assetsList'], function (THREE, createjs, assets
         }
 
         this.startLoad = function() {
+            console.log('start');
             var categories = Object.keys(assetsList);
             function loadCategory(categoryName) {
+                console.log(categoryName);
                 var category = assetsList[categoryName];
                 var list = category.list;
                 var assets = Object.keys(list);
@@ -95,6 +97,7 @@ define(['three', 'PreloadJS', './assetsList'], function (THREE, createjs, assets
                             assetDefinition.type = category.type;
                         }
                         queue.loadFile(assetDefinition);
+                        console.log(assetKey);
                     }
                 }
             }

@@ -1,7 +1,7 @@
-define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', 'game/spaceShip', 'game/weapon', 'game/laser/lasershot',
-        'core/pool', './game/ui/uiMain', './game/spaceShipControl', 'TWEEN', 'game/sun', 'game/posteffects/glitch', 'game/spaceParticlesEffect'],
-    function(Core, NetworkEngine, Camera, Cursor, Spacebox, SpaceShip, Weapon, laser, Pool, UI, SpaceShipControl, TWEEN, Sun, GlitchPass, SpaceParticlesEffect) {
-        'use strict';
+define(['core/core', 'network', 'game/camera', 'game/ui/cursor', 'game/spacebox', 'game/spaceShip', 'game/weapon', 'game/laser/lasershot',
+        'core/pool', './game/ui/uiMain', './game/spaceShipControl', 'TWEEN', 'game/sun', 'game/posteffects/glitch', './game/ui/spaceshipinfos'],
+    function(Core, NetworkEngine, Camera, Cursor, Spacebox, SpaceShip, Weapon, laser, Pool, UI, SpaceShipControl, TWEEN, Sun, GlitchPass, SpaceshipInfos) {
+        "use strict";
         var Game = {};
         var players = {};
         var network = new NetworkEngine(this);
@@ -9,6 +9,7 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
         var localSpaceship = null;
         var control = null;
         var glitchPass = new GlitchPass();
+        var ui = null;
         function localshipDie() {
             network.die();
             localSpaceship.die();
@@ -17,9 +18,8 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
         function onLocalshipDamage(ship, damageAmount) {
             glitchPass.glitchDuring((damageAmount * 0.75) | 0);
         }
-        var frameListener = function (Core, delta) {
-            TWEEN.update(delta * 0.001);
-            control.update(Core, delta);
+
+        function sendLocalPlayerHits(Core, delta) {
             var hits = localSpaceship.update(Core, delta);
             if (hits.length > 0) {
                 var ships = {};
@@ -40,8 +40,14 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
                     network.sufferDamage(playersId[i], ships[playersId[i]]);
                 }
             }
+        }
+
+        var frameListener = function (Core, delta) {
+            TWEEN.update(delta * 0.001);
+            control.update(Core, delta);
+            sendLocalPlayerHits(Core, delta);
+            ui.update(Core, delta, localSpaceship);
             network.update(Core, delta);
-            Core.cursor.move(Core, delta);
             var keys = Object.keys(players);
             for (var i = 0; i < keys.length; ++i) {
                 var key = keys[i];
@@ -58,7 +64,7 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
             localSpaceship.onDie = localshipDie;
             players[localId].ship = localSpaceship;
 
-            control = new SpaceShipControl(localSpaceship);
+            control = new SpaceShipControl(localSpaceship, Game);
             var weapon = new Weapon(Core, Game.laserPool);
             weapon.mesh.name = 'mainWeapon1';
             localSpaceship.setWeapon(weapon);
@@ -72,12 +78,12 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
         }
         var startGame = function() {
             var sun = new Sun({x: 100, y:200, z: 500}, 700, new THREE.Color('yellow'), Core);
-            var ui = new UI(Core, network);
+            ui = new UI(Core, network);
+            Game.ui = ui;
             var spacebox = new Spacebox(Core);
 
             spawnLocalSpaceship();
 
-            Core.cursor = new Cursor(Core.scene);
             Core.composer.addPass(glitchPass);
             Core.frameListeners.push(frameListener);
         }.bind(Game);
@@ -92,14 +98,17 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
                 };
             };
             network.onPlayerSpawn = function(player, shipModel) {
-                var spaceship = players[player.id].ship = new SpaceShip(Core);
+                var playerData = players[player.id];
+                var spaceship = playerData.ship = new SpaceShip(Core);
                 var weapon = new Weapon(Core, this.laserPool);
                 weapon.mesh.name = 'mainWeapon1';
                 spaceship.setWeapon(weapon);
                 weapon = new Weapon(Core, this.laserPool);
                 weapon.mesh.name = 'mainWeapon2';
                 spaceship.setWeapon(weapon);
-                spaceship.player = players[player.id];
+                spaceship.player = playerData;
+                var spaceshipInfos = new SpaceshipInfos(spaceship);
+                playerData.shipInfos = ui.createScreenTracker(spaceship.mesh, spaceshipInfos);
             }.bind(this);
 
             network.onPosition = function(player, positionData) {
@@ -108,10 +117,13 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
                 }
             };
             network.onByePlayer = function(player) {
-                var spaceship = players[player.id].ship;
+                var playerData = players[player.id];
+                var spaceship = playerData.ship;
                 if(spaceship) {
                     spaceship.remove();
+                    ui.deleteScreenTracker(playerData.shipInfos);
                 }
+                delete players[player.id];
             };
             network.onShot = function(player, shotData) {
                 var spaceship = players[player.id].ship;
@@ -133,7 +145,9 @@ define(['core/core', 'network', 'game/camera', 'game/cursor', 'game/spacebox', '
                 startGame();
             };
             network.onShipDie = function(player) {
-                players[player.id].ship.die();
+                var playerData = players[player.id];
+                playerData.ship.die();
+                ui.deleteScreenTracker(playerData.shipInfos);
                 delete players[player.id].ship;
             };
         }.bind(Game);

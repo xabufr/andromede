@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <style>
         body {
             margin: 0;
@@ -8,6 +9,9 @@
         }
         #cursor {
             z-index: 1000;
+            width: 32px;
+            height: 32px;
+            background-image: url('assets/textures/cursorGreen.png');
         }
         #chat-input {
             width: 250px;
@@ -41,18 +45,51 @@
         #chat-messages .message {
             background-color: rgba(200, 200, 200, 0.5);
         }
+        .uiElement {
+            display: none;
+            position: absolute;
+        }
+        #life {
+            height: 10px;
+        }
+        progress.life {
+            background-color: #f3f3f3;
+            padding: 0;
+            border-radius: 9px;
+            border: 0;
+        }
+        progress.life::-webkit-progress-bar {
+            background-color: #f3f3f3;
+            border-radius: 9px;
+        }
+        progress.life::-webkit-progress-value {
+            background: red;
+            background: linear-gradient(to left,  red 0%,#9E0000 100%);
+            border-radius: 9px;
+            transition : width 0.2s ease;
+        }
+        progress.life::-moz-progress-bar {
+            background: red;
+            background: linear-gradient(to left,  red 0%,#9E0000 100%);
+            border-radius: 9px;
+        }
+        progress.objectLife {
+            width: 50px;
+            height: 5px;
+        }
     </style>
     <title>Andromède Game</title>
 </head>
 <body>
 <script src="../bower_components/requirejs/require.js"></script>
 <script src="scripts/config.js"></script>
-<div id="cursor" style="background: url('assets/textures/cursorGreen.png') repeat scroll 0% 0% transparent; width: 32px; height: 32px; position: absolute"></div>
+<div id="cursor" class="uiElement"></div>
 <div id="ui">
     <div id="chat-messages-container">
         <div id="chat-messages"></div>
     </div>
     <input id="chat-input" value="" type="text"/>
+    <progress id="life" class="uiElement life" value="0"/>
 </div>
 </body>
 </html>
